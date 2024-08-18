@@ -1,0 +1,8 @@
+name: FormatterX
+version: '1.0-SNAPSHOT'
+main: pl.syntaxdevteam.FormatterX
+api-version: '1.21'
+load: STARTUP
+authors: [ SyntaxDevTeam ]
+description: The intelligent chat formatting plugin with minimessages support!
+website: https://github.com/SyntaxDevTeam
