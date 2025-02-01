@@ -1,8 +1,26 @@
 name: FormatterX
-version: '1.0-SNAPSHOT'
-main: pl.syntaxdevteam.FormatterX
-api-version: '1.21'
+main: pl.syntaxdevteam.formatter.FormatterX
+version: ${version}
+description: ${description}
+api-version: '1.20'
+folia-supported: true
+
+authors: [SyntaxDevTeam]
+website: https://github.com/SyntaxDevTeam/FormatterX
+support:
+  issues: https://github.com/SyntaxDevTeam/FormatterX/issues
+  updates: https://github.com/SyntaxDevTeam/FormatterX/releases
+
+localization:
+  available: [en_US, pl_PL, fr_FR, es_ES, de_DE]
+  default: en_US
+
+loader: pl.syntaxdevteam.formatter.loader.SyntaxLoader
+has-open-classloader: false
 load: STARTUP
-authors: [ SyntaxDevTeam ]
-description: The intelligent chat formatting plugin with minimessages support!
-website: https://github.com/SyntaxDevTeam
+#load before: [RewarderX]
+
+softdepend: [Folia]
+
+features:
+  debug: true

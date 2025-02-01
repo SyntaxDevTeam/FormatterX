@@ -1,10 +1,11 @@
 plugins {
-    kotlin("jvm") version "2.0.20-RC2"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    kotlin("jvm") version "2.1.10"
+    id("com.gradleup.shadow") version "9.0.0-beta6"
 }
 
-group = "pl.syntaxdevteam"
+group = "pl.syntaxdevteam.formatter"
 version = "1.0-SNAPSHOT"
+description = "The intelligent chat formatting plugin with minimessages support!"
 
 repositories {
     mavenCentral()
@@ -18,7 +19,6 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 }
 
 val targetJavaVersion = 21
@@ -31,7 +31,7 @@ tasks.build {
 }
 
 tasks.processResources {
-    val props = mapOf("version" to version)
+    val props = mapOf("version" to version, "description" to description)
     inputs.properties(props)
     filteringCharset = "UTF-8"
     filesMatching("paper-plugin.yml") {
