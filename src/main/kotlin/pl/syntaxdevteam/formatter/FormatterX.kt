@@ -1,10 +1,7 @@
 package pl.syntaxdevteam.formatter
 
-import net.kyori.adventure.text.Component
-import org.bukkit.Bukkit
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.java.JavaPlugin
-import pl.syntaxdevteam.formatter.basic.LegacyFormatter
 import pl.syntaxdevteam.formatter.common.*
 import java.io.File
 import java.util.*
@@ -25,18 +22,8 @@ class FormatterX : JavaPlugin() {
         statsCollector = StatsCollector(this)
         updateChecker = UpdateChecker(this)
         updateChecker.checkForUpdates()
-        test()
-
     }
 
-    fun test() {
-        logger.log("Test")
-        val formatter = LegacyFormatter()
-        val formattedComponent = formatter.format("&aZielony &cCzerwony")
-        Bukkit.getConsoleSender().sendMessage(formattedComponent) // Wypisze: Component.text(§aZielony §cCzerwony)
-
-
-    }
     override fun onDisable() {
 
         // Plugin shutdown logic

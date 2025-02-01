@@ -18,7 +18,12 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+    compileOnly("net.kyori:adventure-text-serializer-legacy:4.18.0")
+    compileOnly("net.kyori:adventure-text-minimessage:4.18.0")
+    compileOnly("net.kyori:adventure-text-serializer-gson:4.18.0")
+    compileOnly("net.kyori:adventure-text-serializer-plain:4.18.0")
+    implementation("net.kyori:adventure-text-serializer-ansi:4.18.0")
 }
 
 val targetJavaVersion = 21
