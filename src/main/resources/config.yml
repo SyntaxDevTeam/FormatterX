@@ -1,0 +1,14 @@
+# Plugin language selection. Possible values:  EN, PL, ES, FR, DE
+# If you would like to add your own language file, please contact us on Discord (https://discord.gg/Zk6mxv7eMh).
+language: "PL"
+
+# Update check and auto-update settings
+checkForUpdates: true
+autoDownloadUpdates: true
+
+# Debug mode set to true provides more detailed logs in the console
+debug: false
+
+# Should StatsCollector be enabled? Recommended setting: true
+stats:
+  enabled: false

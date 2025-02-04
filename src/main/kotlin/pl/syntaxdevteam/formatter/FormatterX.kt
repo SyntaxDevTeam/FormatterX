@@ -2,22 +2,25 @@ package pl.syntaxdevteam.formatter
 
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.java.JavaPlugin
+import pl.syntaxdevteam.formatter.basic.ChatFormatterListener
 import pl.syntaxdevteam.formatter.common.*
 import java.io.File
 import java.util.*
 
 class FormatterX : JavaPlugin() {
-    private val configHandler by lazy { ConfigHandler(this, "config.yml") }
     private val config: FileConfiguration = getConfig()
     var logger: Logger = Logger(this, config.getBoolean("debug"))
     lateinit var pluginsManager: PluginManager
     private lateinit var statsCollector: StatsCollector
-    lateinit var messageHandler: MessageHandler
+    private lateinit var messageHandler: MessageHandler
+    private lateinit var chatListener: ChatFormatterListener
     private lateinit var updateChecker: UpdateChecker
 
     override fun onEnable() {
-        configHandler.verifyAndUpdateConfig()
+        saveDefaultConfig()
         messageHandler = MessageHandler(this).apply { initial() }
+        chatListener = ChatFormatterListener(this, messageHandler)
+        server.pluginManager.registerEvents(chatListener, this)
         pluginsManager = PluginManager(this)
         statsCollector = StatsCollector(this)
         updateChecker = UpdateChecker(this)
