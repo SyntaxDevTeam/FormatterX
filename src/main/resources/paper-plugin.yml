@@ -17,10 +17,21 @@ localization:
 
 loader: pl.syntaxdevteam.formatter.loader.SyntaxLoader
 has-open-classloader: false
-load: STARTUP
-#load before: [RewarderX]
+load: POSTWORLD
 
 softdepend: [Folia]
 
+dependencies:
+  server:
+    PlaceholderAPI:
+      load: BEFORE #
+      required: false
+    LuckPerms:
+      load: BEFORE #
+      required: true
+
 features:
   debug: true
+  stats: true
+  update-check: true
+  auto-update: false

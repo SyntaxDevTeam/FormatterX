@@ -91,7 +91,7 @@ class MessageHandler(private val plugin: FormatterX) {
         messages = loadMessages()
     }
 
-    private fun getPrefix(): String {
+    fun getPrefix(): String {
         return messages.getString("prefix") ?: "[${plugin.pluginMeta.name}]"
     }
 
@@ -191,29 +191,87 @@ class MessageHandler(private val plugin: FormatterX) {
     }
 
     private fun convertLegacyToMiniMessage(message: String): String {
+        val legacyMap = mapOf(
+            "&0" to "<black>",
+            "&1" to "<dark_blue>",
+            "&2" to "<dark_green>",
+            "&3" to "<dark_aqua>",
+            "&4" to "<dark_red>",
+            "&5" to "<dark_purple>",
+            "&6" to "<gold>",
+            "&7" to "<gray>",
+            "&8" to "<dark_gray>",
+            "&9" to "<blue>",
+            "&a" to "<green>",
+            "&b" to "<aqua>",
+            "&c" to "<red>",
+            "&d" to "<light_purple>",
+            "&e" to "<yellow>",
+            "&f" to "<white>",
+            "&k" to "<obfuscated>",
+            "&l" to "<bold>",
+            "&m" to "<strikethrough>",
+            "&n" to "<underlined>",
+            "&o" to "<italic>",
+            "&r" to "<reset>"
+        )
+
+        val result = StringBuilder()
+        var insideMiniMessageTag = false
+        var insidePlaceholder = false
+
+        var i = 0
+        while (i < message.length) {
+            when {
+                message[i] == '<' -> insideMiniMessageTag = true
+                message[i] == '>' -> insideMiniMessageTag = false
+                message[i] == '{' -> insidePlaceholder = true
+                message[i] == '}' -> insidePlaceholder = false
+            }
+
+            if (!insideMiniMessageTag && !insidePlaceholder && i + 1 < message.length && message[i] == '&') {
+                val key = "&${message[i + 1]}"
+                val replacement = legacyMap[key]
+                if (replacement != null) {
+                    result.append(replacement)
+                    i++ // Pomiń kolejną literę
+                } else {
+                    result.append(message[i])
+                }
+            } else {
+                result.append(message[i])
+            }
+
+            i++
+        }
+
+        return result.toString()
+    }
+
+    private fun convertSectionSignToMiniMessage(message: String): String {
         return message
-            .replace("&0", "<black>") // Czarny
-            .replace("&1", "<dark_blue>") // Ciemnoniebieski
-            .replace("&2", "<dark_green>") // Ciemnozielony
-            .replace("&3", "<dark_aqua>") // Ciemny turkus
-            .replace("&4", "<dark_red>") // Ciemnoczerwony
-            .replace("&5", "<dark_purple>") // Ciemnofioletowy
-            .replace("&6", "<gold>") // Złoty
-            .replace("&7", "<gray>") // Szary
-            .replace("&8", "<dark_gray>") // Ciemnoszary
-            .replace("&9", "<blue>") // Niebieski
-            .replace("&a", "<green>") // Zielony
-            .replace("&b", "<aqua>") // Turkusowy
-            .replace("&c", "<red>") // Czerwony
-            .replace("&d", "<light_purple>") // Jasnofioletowy
-            .replace("&e", "<yellow>") // Żółty
-            .replace("&f", "<white>") // Biały
-            .replace("&k", "<obfuscated>") // Efekt zakodowanego tekstu
-            .replace("&l", "<bold>") // Pogrubienie
-            .replace("&m", "<strikethrough>") // Przekreślenie
-            .replace("&n", "<underlined>") // Podkreślenie
-            .replace("&o", "<italic>") // Kursywa
-            .replace("&r", "<reset>") // Resetowanie stylów
+            .replace("§0", "<black>")
+            .replace("§1", "<dark_blue>")
+            .replace("§2", "<dark_green>")
+            .replace("§3", "<dark_aqua>")
+            .replace("§4", "<dark_red>")
+            .replace("§5", "<dark_purple>")
+            .replace("§6", "<gold>")
+            .replace("§7", "<gray>")
+            .replace("§8", "<dark_gray>")
+            .replace("§9", "<blue>")
+            .replace("§a", "<green>")
+            .replace("§b", "<aqua>")
+            .replace("§c", "<red>")
+            .replace("§d", "<light_purple>")
+            .replace("§e", "<yellow>")
+            .replace("§f", "<white>")
+            .replace("§k", "<obfuscated>")
+            .replace("§l", "<bold>")
+            .replace("§m", "<strikethrough>")
+            .replace("§n", "<underlined>")
+            .replace("§o", "<italic>")
+            .replace("§r", "<reset>")
     }
 
     private fun convertHexToMiniMessage(message: String): String {
@@ -224,9 +282,11 @@ class MessageHandler(private val plugin: FormatterX) {
     }
 
     fun formatMixedTextToMiniMessage(message: String): Component {
-        var formattedMessage = convertLegacyToMiniMessage(message)
-        formattedMessage = convertHexToMiniMessage(formattedMessage)
+        var formattedMessage = convertSectionSignToMiniMessage(message) // Najpierw konwersja znaków paragrafu
+        formattedMessage = convertLegacyToMiniMessage(formattedMessage) // Potem '&' na MiniMessage
+        formattedMessage = convertHexToMiniMessage(formattedMessage) // Obsługa kolorów hex
 
         return MiniMessage.miniMessage().deserialize(formattedMessage)
     }
+
 }

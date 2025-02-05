@@ -16,7 +16,7 @@ class FormatterX : JavaPlugin() {
     private lateinit var messageHandler: MessageHandler
     private lateinit var chatListener: ChatFormatterListener
     private lateinit var updateChecker: UpdateChecker
-    private var luckPerms: LuckPerms? = null
+    var luckPerms: LuckPerms? = null
 
     override fun onEnable() {
         luckPerms = server.servicesManager.load(LuckPerms::class.java)

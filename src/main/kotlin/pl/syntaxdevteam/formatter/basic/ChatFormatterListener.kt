@@ -4,6 +4,7 @@ import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -14,40 +15,51 @@ class ChatFormatterListener(
     private val plugin: FormatterX,
     private val messageHandler: MessageHandler
 ) : Listener {
-
+    private val luckPerms = plugin.luckPerms
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onChat(event: AsyncChatEvent) {
-        event.isCancelled = true // Usuwamy domyślne formatowanie czatu!
+        event.isCancelled = true
 
         val player = event.player
         val messageContent = PlainTextComponentSerializer.plainText().serialize(event.message())
 
-        // Pobieramy szablon z configu
         val defaultFormat = plugin.config.getString("chat.defaultFormat")
-            ?: "[{prefix}]{displayname} <red>» {message}</red>"
+            ?: "${messageHandler.getPrefix()} {displayname} » {message}"
 
-        // Pobieramy dane gracza
+        val metaData = luckPerms?.getPlayerAdapter(Player::class.java)?.getMetaData(player)
+
+        val prefix = metaData?.prefix ?: ""
+        val suffix = metaData?.suffix ?: ""
+
+        val prefixes = metaData?.prefixes?.entries
+            ?.sortedByDescending { it.key }
+            ?.joinToString(" ") { it.value } ?: ""
+
+        val suffixes = metaData?.suffixes?.entries
+            ?.sortedByDescending { it.key }
+            ?.joinToString(" ") { it.value } ?: ""
+
+        val usernameColor = metaData?.getMetaValue("username-color") ?: "<white>"
+        val messageColor = metaData?.getMetaValue("message-color") ?: "<gray>"
+
         val displayName = PlainTextComponentSerializer.plainText().serialize(player.displayName())
         val playerName = player.name
         val worldName = player.world.name
 
-        // Tymczasowe wartości prefix/suffix (później można podpiąć LuckPerms)
-        val prefix = "FormatterX"
-        val suffix = "FormatterX"
-
-        // Składamy finalny tekst zgodnie z szablonem
         val formattedMessage = defaultFormat
             .replace("{prefix}", prefix)
             .replace("{suffix}", suffix)
+            .replace("{prefixes}", prefixes)
+            .replace("{suffixes}", suffixes)
             .replace("{displayname}", displayName)
             .replace("{name}", playerName)
             .replace("{world}", worldName)
+            .replace("{username-color}", usernameColor)
+            .replace("{message-color}", messageColor)
             .replace("{message}", messageContent)
 
-        // Przetwarzamy sformatowany tekst do MiniMessage
         val finalComponent: Component = messageHandler.formatMixedTextToMiniMessage(formattedMessage)
 
-        // Wysyłamy wiadomość na czat dla wszystkich graczy
         Bukkit.getServer().sendMessage(finalComponent)
     }
 }
