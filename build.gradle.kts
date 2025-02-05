@@ -15,15 +15,18 @@ repositories {
     maven("https://oss.sonatype.org/content/groups/public/") {
         name = "sonatype"
     }
+    maven("https://repo.extendedclip.com/releases/")
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+    compileOnly("net.luckperms:api:5.4")
+    compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("net.kyori:adventure-text-serializer-legacy:4.18.0")
     compileOnly("net.kyori:adventure-text-minimessage:4.18.0")
     compileOnly("net.kyori:adventure-text-serializer-gson:4.18.0")
     compileOnly("net.kyori:adventure-text-serializer-plain:4.18.0")
-    implementation("net.kyori:adventure-text-serializer-ansi:4.18.0")
+    compileOnly("net.kyori:adventure-text-serializer-ansi:4.18.0")
 }
 
 val targetJavaVersion = 21
