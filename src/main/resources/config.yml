@@ -1,4 +1,23 @@
+# Please read the https://luckperms.net/wiki/Prefixes,-Suffixes-&-Meta before you set up.
+#
+# Placeholders:
+# {message} - the chat message
+# {name} - the player's name
+# {displayname} - the player's display name / nickname
+# {world} - the world name of the player's current world
+# {prefix} - the player's highest priority prefix
+# {suffix} - the player's highest priority suffix
+# {prefixes} - the player's prefixes sorted by the highest priority
+# {suffixes} - the player's suffixes sorted by the highest priority
+# {username-color} - the player's or the group's username color
+# {message-color} - the player's or the group's message color
+chat-format: "{prefix}{name}&r: {message}"
 
+# Set the format per group.
+# Note: Option for more advanced users. Remove comments to run.
+group-formats:
+  default: "[default] {name}&r: {message}"
+#  admin: "[admin] {name}&r: {message}"
 
 # Plugin language selection. Possible values:  EN, PL, ES, FR, DE
 # If you would like to add your own language file, please contact us on Discord (https://discord.gg/Zk6mxv7eMh).
