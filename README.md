@@ -1,2 +1,4 @@
 # FormatterX
-The intelligent chat formatting plugin with minimessages support!
+
+### Description
+The intelligent chat formatting plugin with support for LuckPerms, Vault/VaultUnlocked compatible plugins
