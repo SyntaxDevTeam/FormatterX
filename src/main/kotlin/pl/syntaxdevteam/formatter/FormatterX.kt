@@ -8,6 +8,7 @@ import pl.syntaxdevteam.formatter.common.*
 import java.io.File
 import java.util.*
 
+@Suppress("UnstableApiUsage")
 class FormatterX : JavaPlugin() {
     private val config: FileConfiguration = getConfig()
     var logger: Logger = Logger(this, config.getBoolean("debug"))
@@ -31,8 +32,7 @@ class FormatterX : JavaPlugin() {
     }
 
     override fun onDisable() {
-
-        // Plugin shutdown logic
+        logger.err(pluginMeta.name + " " + pluginMeta.version + " has been disabled ☹️")
     }
 
     /**
