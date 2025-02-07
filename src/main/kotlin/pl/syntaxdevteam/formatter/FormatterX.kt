@@ -1,10 +1,10 @@
 package pl.syntaxdevteam.formatter
 
-import net.luckperms.api.LuckPerms
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import pl.syntaxdevteam.formatter.basic.ChatFormatterListener
 import pl.syntaxdevteam.formatter.common.*
+import pl.syntaxdevteam.formatter.hooks.HookHandler
 import java.io.File
 import java.util.*
 
@@ -15,16 +15,16 @@ class FormatterX : JavaPlugin() {
     lateinit var pluginsManager: PluginManager
     private lateinit var statsCollector: StatsCollector
     private lateinit var messageHandler: MessageHandler
-    private lateinit var chatListener: ChatFormatterListener
     private lateinit var updateChecker: UpdateChecker
-    var luckPerms: LuckPerms? = null
+    private lateinit var hookHandler: HookHandler
 
     override fun onEnable() {
-        luckPerms = server.servicesManager.load(LuckPerms::class.java)
         saveDefaultConfig()
+        // Inicjalizacja HookHandler
+        hookHandler = HookHandler(this)
         messageHandler = MessageHandler(this).apply { initial() }
-        chatListener = ChatFormatterListener(this, messageHandler)
-        server.pluginManager.registerEvents(chatListener, this)
+        // Rejestracja listenerów
+        server.pluginManager.registerEvents(ChatFormatterListener(this, messageHandler, hookHandler), this)
         pluginsManager = PluginManager(this)
         statsCollector = StatsCollector(this)
         updateChecker = UpdateChecker(this)
