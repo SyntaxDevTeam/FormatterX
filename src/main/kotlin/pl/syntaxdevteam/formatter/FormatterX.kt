@@ -20,10 +20,8 @@ class FormatterX : JavaPlugin() {
 
     override fun onEnable() {
         saveDefaultConfig()
-        // Inicjalizacja HookHandler
         hookHandler = HookHandler(this)
         messageHandler = MessageHandler(this).apply { initial() }
-        // Rejestracja listenerów
         server.pluginManager.registerEvents(ChatFormatterListener(this, messageHandler, hookHandler), this)
         pluginsManager = PluginManager(this)
         statsCollector = StatsCollector(this)
