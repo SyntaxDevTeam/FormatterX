@@ -1,6 +1,7 @@
 package pl.syntaxdevteam.formatter.hooks
 
 import net.luckperms.api.LuckPerms
+import net.luckperms.api.cacheddata.CachedMetaData
 import net.luckperms.api.model.user.User
 import net.milkbowl.vault.chat.Chat
 import net.milkbowl.vault.permission.Permission
@@ -22,6 +23,7 @@ class HookHandler(private val plugin: FormatterX) {
     private var permission: Permission? = null
 
     init {
+        checkPlaceholderAPI()
         checkLuckPerms()
         checkVault()
         if (chat == null || permission == null) {
@@ -133,5 +135,33 @@ class HookHandler(private val plugin: FormatterX) {
     fun getLuckPermsMetaValue(player: Player, key: String): String? {
         val user: User? = luckPerms?.userManager?.getUser(player.uniqueId)
         return user?.cachedData?.metaData?.getMetaValue(key)
+    }
+
+    /**
+     * Retrieves all metadata for a player from the LuckPerms service.
+     * This is typically used to get all metadata values associated with a player.
+     *
+     * @param player The player whose metadata is being retrieved.
+     * @return The metadata for the player as a [CachedMetaData] object, or null if not found.
+     */
+    fun getAllLuckPermsMetData(player: Player): CachedMetaData? {
+        return luckPerms?.getPlayerAdapter(Player::class.java)?.getMetaData(player)
+    }
+
+    /**
+     * Checks if the PlaceholderAPI plugin is enabled on the server.
+     * If PlaceholderAPI is found, a success message is logged, and true is returned.
+     * If not, a warning is logged, and false is returned.
+     *
+     * @return True if PlaceholderAPI is found, false otherwise.
+     */
+    fun checkPlaceholderAPI(): Boolean {
+        if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            plugin.logger.success("Hooked into PlaceholderAPI!")
+            return true
+        } else {
+            plugin.logger.warning("PlaceholderAPI plugin not found on server!")
+            return false
+        }
     }
 }
