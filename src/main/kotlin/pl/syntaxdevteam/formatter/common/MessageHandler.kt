@@ -17,6 +17,7 @@ import java.io.File
 /**
  * The MessageHandler class manages messages for the FormatterX plugin.
  * It is responsible for loading, updating, and formatting messages from YAML files.
+ * Version: 2.0.0
  *
  * @property plugin Instance of the main FormatterX plugin class.
  */
@@ -305,10 +306,10 @@ class MessageHandler(private val plugin: FormatterX) {
     }
 
     /**
-     * Converts Legacy text (&-codes) to MiniMessage format.
+     * Converts Legacy (&) and HEX color codes to MiniMessage format.
      *
-     * @param message The message in Legacy format.
-     * @return The message in MiniMessage format.
+     * @param message The message to convert.
+     * @return An Adventure Component with proper MiniMessage formatting.
      */
     private fun convertLegacyToMiniMessage(message: String): String {
         val legacyMap = mapOf(
@@ -336,35 +337,29 @@ class MessageHandler(private val plugin: FormatterX) {
             "&r" to "<reset>"
         )
 
-        val result = StringBuilder()
-        var insideMiniMessageTag = false
-        var insidePlaceholder = false
-
-        var i = 0
-        while (i < message.length) {
-            when {
-                message[i] == '<' -> insideMiniMessageTag = true
-                message[i] == '>' -> insideMiniMessageTag = false
-                message[i] == '{' -> insidePlaceholder = true
-                message[i] == '}' -> insidePlaceholder = false
+        fun processLegacy(segment: String): String {
+            return segment.replace(Regex("&([0-9a-fklmnor])")) { matchResult ->
+                legacyMap["&${matchResult.groupValues[1]}"] ?: matchResult.value
             }
-
-            if (!insideMiniMessageTag && !insidePlaceholder && i + 1 < message.length && message[i] == '&') {
-                val key = "&${message[i + 1]}"
-                val replacement = legacyMap[key]
-                if (replacement != null) {
-                    result.append(replacement)
-                    i++ // Pomiń kolejną literę
-                } else {
-                    result.append(message[i])
-                }
-            } else {
-                result.append(message[i])
-            }
-
-            i++
         }
 
+        val pattern = Regex("(<[^>]+>|\\{[^}]+})")
+        val result = StringBuilder()
+        var lastIndex = 0
+
+        // Iterujemy po dopasowaniach – dzięki temu zostawiamy niezmienione treści w tagach
+        for (match in pattern.findAll(message)) {
+            val start = match.range.first
+            if (start > lastIndex) {
+                val nonTag = message.substring(lastIndex, start)
+                result.append(processLegacy(nonTag))
+            }
+            result.append(match.value)
+            lastIndex = match.range.last + 1
+        }
+        if (lastIndex < message.length) {
+            result.append(processLegacy(message.substring(lastIndex)))
+        }
         return result.toString()
     }
 
@@ -414,6 +409,19 @@ class MessageHandler(private val plugin: FormatterX) {
     }
 
     /**
+     * Converts Unicode escape sequences to their respective characters.
+     *
+     * @param input The input string.
+     * @return The string with Unicode escape sequences converted to characters.
+     */
+    private fun convertUnicodeEscapeSequences(input: String): String {
+        return input.replace(Regex("""\\u([0-9A-Fa-f]{4})""")) { matchResult ->
+            val codePoint = matchResult.groupValues[1].toInt(16)
+            String(Character.toChars(codePoint))
+        }
+    }
+
+    /**
      * Formats any text to MiniMessage, supporting Legacy (&), Bukkit (§), and HEX color codes.
      *
      * @param message The message to format.
@@ -423,6 +431,7 @@ class MessageHandler(private val plugin: FormatterX) {
         var formattedMessage = convertSectionSignToMiniMessage(message)
         formattedMessage = convertLegacyToMiniMessage(formattedMessage)
         formattedMessage = convertHexToMiniMessage(formattedMessage)
+        formattedMessage = convertUnicodeEscapeSequences(formattedMessage)
 
         return MiniMessage.miniMessage().deserialize(formattedMessage)
     }
