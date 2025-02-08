@@ -14,18 +14,29 @@ import org.bukkit.configuration.file.YamlConfiguration
 import pl.syntaxdevteam.formatter.FormatterX
 import java.io.File
 
+/**
+ * The MessageHandler class manages messages for the FormatterX plugin.
+ * It is responsible for loading, updating, and formatting messages from YAML files.
+ *
+ * @property plugin Instance of the main FormatterX plugin class.
+ */
 @Suppress("UnstableApiUsage", "unused")
 class MessageHandler(private val plugin: FormatterX) {
     private val language = plugin.config.getString("language") ?: "EN"
     private var messages: FileConfiguration
 
+    /**
+     * Initializes default language settings and loads the message file.
+     */
     init {
         copyDefaultMessages()
         updateLanguageFile()
         messages = loadMessages()
     }
 
-
+    /**
+     * Displays information about the language file author based on the selected language.
+     */
     fun initial() {
         val author = when (language.lowercase()) {
             "pl" -> "WieszczY"
@@ -38,6 +49,9 @@ class MessageHandler(private val plugin: FormatterX) {
         plugin.logger.log("<gray>Loaded \"$language\" language file by: <white><b>$author</b></white>")
     }
 
+    /**
+     * Copies the default language file if it does not exist in the plugin's data folder.
+     */
     private fun copyDefaultMessages() {
         val messageFile = File(plugin.dataFolder, "lang/messages_${language.lowercase()}.yml")
         if (!messageFile.exists()) {
@@ -46,6 +60,10 @@ class MessageHandler(private val plugin: FormatterX) {
         }
     }
 
+    /**
+     * Updates the language file by adding missing entries, synchronizing it with the default version
+     * from the plugin's resources.
+     */
     private fun updateLanguageFile() {
         val langFile = File(plugin.dataFolder, "lang/messages_${language.lowercase()}.yml")
         val defaultLangStream = plugin.getResource("lang/messages_${language.lowercase()}.yml")
@@ -82,19 +100,40 @@ class MessageHandler(private val plugin: FormatterX) {
         }
     }
 
+    /**
+     * Loads messages from the language file into the configuration.
+     *
+     * @return A FileConfiguration object containing messages.
+     */
     private fun loadMessages(): FileConfiguration {
         val langFile = File(plugin.dataFolder, "lang/messages_${language.lowercase()}.yml")
         return YamlConfiguration.loadConfiguration(langFile)
     }
 
+    /**
+     * Reloads messages from the language file.
+     */
     fun reloadMessages() {
         messages = loadMessages()
     }
 
+    /**
+    * Retrieves the message prefix.
+    *
+    * @return A string representing the message prefix.
+    */
     fun getPrefix(): String {
         return messages.getString("prefix") ?: "[${plugin.pluginMeta.name}]"
     }
 
+    /**
+     * Retrieves a message formatted as an Adventure Component, including the prefix and placeholders.
+     *
+     * @param category The message category.
+     * @param key The message key.
+     * @param placeholders A map of placeholders to replace in the message.
+     * @return The formatted message as a Component.
+     */
     fun getMessage(category: String, key: String, placeholders: Map<String, String> = emptyMap()): Component {
         val prefix = getPrefix()
         val message = messages.getString("$category.$key") ?: run {
@@ -108,6 +147,14 @@ class MessageHandler(private val plugin: FormatterX) {
         return formatMixedTextToMiniMessage(mixMessage)
     }
 
+    /**
+     * Retrieves a message as a simple string with a prefix and placeholders.
+     *
+     * @param category The message category.
+     * @param key The message key.
+     * @param placeholders A map of placeholders.
+     * @return The formatted message as a String.
+     */
     fun getSimpleMessage(category: String, key: String, placeholders: Map<String, String> = emptyMap()): String {
         val prefix = getPrefix()
         val message = messages.getString("$category.$key") ?: run {
@@ -120,6 +167,14 @@ class MessageHandler(private val plugin: FormatterX) {
         return "$prefix $formattedMessage"
     }
 
+    /**
+     * Retrieves a message without a prefix, including placeholders.
+     *
+     * @param category The message category.
+     * @param key The message key.
+     * @param placeholders A map of placeholders.
+     * @return The message as a String.
+     */
     fun getCleanMessage(category: String, key: String, placeholders: Map<String, String> = emptyMap()): String {
         val message = messages.getString("$category.$key") ?: run {
             plugin.logger.err("There was an error loading the message $key from category $category")
@@ -131,6 +186,14 @@ class MessageHandler(private val plugin: FormatterX) {
         return formattedMessage
     }
 
+    /**
+     * Retrieves a log message as an Adventure Component.
+     *
+     * @param category The message category.
+     * @param key The message key.
+     * @param placeholders A map of placeholders.
+     * @return The formatted message as a Component.
+     */
     fun getLogMessage(category: String, key: String, placeholders: Map<String, String> = emptyMap()): Component {
         val message = messages.getString("$category.$key") ?: run {
             plugin.logger.err("There was an error loading the message $key from category $category")
@@ -142,6 +205,14 @@ class MessageHandler(private val plugin: FormatterX) {
         return formatMixedTextToMiniMessage(formattedMessage)
     }
 
+    /**
+     * Retrieves a list of messages formatted as Adventure Components.
+     *
+     * @param category The message category.
+     * @param key The message key.
+     * @param placeholders A map of placeholders.
+     * @return A list of Components representing formatted messages.
+     */
     fun getComplexMessage(category: String, key: String, placeholders: Map<String, String> = emptyMap()): List<Component> {
         val messageList = messages.getStringList("$category.$key")
         if (messageList.isEmpty()) {
@@ -156,18 +227,43 @@ class MessageHandler(private val plugin: FormatterX) {
         }
     }
 
+    /**
+     * Retrieves a list of reasons for a given category and key.
+     *
+     * @param category The message category.
+     * @param key The message key.
+     * @return A list of reasons as Strings.
+     */
     fun getReasons(category: String, key: String): List<String> {
         return messages.getStringList("$category.$key")
     }
 
+    /**
+     * Converts Legacy text (&-codes) to an Adventure Component.
+     *
+     * @param message The message to convert.
+     * @return An Adventure Component with proper formatting.
+     */
     fun formatLegacyText(message: String): Component {
         return LegacyComponentSerializer.legacyAmpersand().deserialize(message)
     }
 
+    /**
+     * Converts Legacy text (&-codes) to a properly formatted Bukkit text.
+     *
+     * @param message The message to convert.
+     * @return A properly formatted Bukkit text.
+     */
     fun formatLegacyTextBukkit(message: String): String {
         return ChatColor.translateAlternateColorCodes('&', message)
     }
 
+    /**
+     * Converts text containing both Legacy (&) and HEX color codes to an Adventure Component.
+     *
+     * @param message The message to convert.
+     * @return An Adventure Component with proper formatting.
+     */
     fun formatHexAndLegacyText(message: String): Component {
 
         val hexFormatted = message.replace("&#([a-fA-F0-9]{6})".toRegex()) {
@@ -178,18 +274,42 @@ class MessageHandler(private val plugin: FormatterX) {
         return LegacyComponentSerializer.legacySection().deserialize(hexFormatted)
     }
 
+    /**
+     * Formats a message using MiniMessage.
+     *
+     * @param message The message to format.
+     * @return An Adventure Component with proper MiniMessage formatting.
+     */
     fun miniMessageFormat(message: String): Component {
         return MiniMessage.miniMessage().deserialize(message)
     }
 
+    /**
+     * Retrieves ANSI text from an Adventure Component.
+     *
+     * @param component The Adventure Component.
+     * @return The ANSI formatted text.
+     */
     fun getANSIText(component: Component): String {
         return ANSIComponentSerializer.ansi().serialize(component)
     }
 
+    /**
+     * Retrieves plain text from an Adventure Component.
+     *
+     * @param component The Adventure Component.
+     * @return The plain text.
+     */
     fun getPlainText(component: Component): String {
         return PlainTextComponentSerializer.plainText().serialize(component)
     }
 
+    /**
+     * Converts Legacy text (&-codes) to MiniMessage format.
+     *
+     * @param message The message in Legacy format.
+     * @return The message in MiniMessage format.
+     */
     private fun convertLegacyToMiniMessage(message: String): String {
         val legacyMap = mapOf(
             "&0" to "<black>",
@@ -248,6 +368,12 @@ class MessageHandler(private val plugin: FormatterX) {
         return result.toString()
     }
 
+    /**
+     * Converts Bukkit section signs (§) to MiniMessage format.
+     *
+     * @param message The message to convert.
+     * @return The message in MiniMessage format.
+     */
     private fun convertSectionSignToMiniMessage(message: String): String {
         return message
             .replace("§0", "<black>")
@@ -274,6 +400,12 @@ class MessageHandler(private val plugin: FormatterX) {
             .replace("§r", "<reset>")
     }
 
+    /**
+     * Converts HEX color codes (&#RRGGBB) to MiniMessage format.
+     *
+     * @param message The message to convert.
+     * @return The message in MiniMessage format.
+     */
     private fun convertHexToMiniMessage(message: String): String {
         return message.replace("&#([a-fA-F0-9]{6})".toRegex()) {
             val hex = it.groupValues[1]
@@ -281,10 +413,16 @@ class MessageHandler(private val plugin: FormatterX) {
         }
     }
 
+    /**
+     * Formats any text to MiniMessage, supporting Legacy (&), Bukkit (§), and HEX color codes.
+     *
+     * @param message The message to format.
+     * @return An Adventure Component with proper MiniMessage formatting.
+     */
     fun formatMixedTextToMiniMessage(message: String): Component {
-        var formattedMessage = convertSectionSignToMiniMessage(message) // Najpierw konwersja znaków paragrafu
-        formattedMessage = convertLegacyToMiniMessage(formattedMessage) // Potem '&' na MiniMessage
-        formattedMessage = convertHexToMiniMessage(formattedMessage) // Obsługa kolorów hex
+        var formattedMessage = convertSectionSignToMiniMessage(message)
+        formattedMessage = convertLegacyToMiniMessage(formattedMessage)
+        formattedMessage = convertHexToMiniMessage(formattedMessage)
 
         return MiniMessage.miniMessage().deserialize(formattedMessage)
     }
