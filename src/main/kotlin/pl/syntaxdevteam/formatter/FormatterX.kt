@@ -3,6 +3,7 @@ package pl.syntaxdevteam.formatter
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import pl.syntaxdevteam.formatter.basic.ChatFormatterListener
+import pl.syntaxdevteam.formatter.commands.CommandManager
 import pl.syntaxdevteam.formatter.common.*
 import pl.syntaxdevteam.formatter.hooks.HookHandler
 import java.io.File
@@ -14,23 +15,39 @@ class FormatterX : JavaPlugin() {
     var logger: Logger = Logger(this, config.getBoolean("debug"))
     lateinit var pluginsManager: PluginManager
     private lateinit var statsCollector: StatsCollector
-    private lateinit var messageHandler: MessageHandler
+    lateinit var messageHandler: MessageHandler
     private lateinit var updateChecker: UpdateChecker
     private lateinit var hookHandler: HookHandler
+    private lateinit var commandManager: CommandManager
 
     override fun onEnable() {
         saveDefaultConfig()
         hookHandler = HookHandler(this)
         messageHandler = MessageHandler(this).apply { initial() }
         server.pluginManager.registerEvents(ChatFormatterListener(this, messageHandler, hookHandler), this)
+        registerCommands()
         pluginsManager = PluginManager(this)
         statsCollector = StatsCollector(this)
         updateChecker = UpdateChecker(this)
         updateChecker.checkForUpdates()
     }
 
+    fun onReload() {
+        reloadConfig()
+
+        logger.debug("The configuration file has been reloaded.")
+    }
+
     override fun onDisable() {
         logger.err(pluginMeta.name + " " + pluginMeta.version + " has been disabled ☹️")
+    }
+
+    /**
+     * Registers the plugin commands.
+     */
+    private fun registerCommands(){
+        commandManager = CommandManager(this)
+        commandManager.registerCommands()
     }
 
     /**
