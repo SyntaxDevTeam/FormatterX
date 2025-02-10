@@ -81,6 +81,7 @@ class ChatFormatterListener(
         val worldName = player.world.name
         //TODO: Dodać użycie filterMessageContent()
         var format = (plugin.config.getString("chat.group-formats.$group") ?: plugin.config.getString("chat.defaultFormat") ?: "${messageHandler.getPrefix()} {displayname} » {message}")
+            .replace("{group}", group)
             .replace("{prefix}", prefix)
             .replace("{suffix}", suffix)
             .replace("{prefixes}", prefixes)
