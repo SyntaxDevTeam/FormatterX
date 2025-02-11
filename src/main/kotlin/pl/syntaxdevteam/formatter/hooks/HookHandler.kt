@@ -98,11 +98,11 @@ class HookHandler(private val plugin: FormatterX) {
             plugin.logger.debug("LuckPerms primary group for ${player.name}: $lpGroup")
             return lpGroup
         }
-        val groups = permission?.getPlayerGroups(player)
+        val groups = permission?.getPrimaryGroup(player)
+        //val groups = permission?.getPrimaryGroup(player.world.name, player)
         if (!groups.isNullOrEmpty()) {
-            plugin.logger.debug("Vault groups for ${player.name}: ${groups.joinToString(",")}")
-            // TODO: Tutaj zastosować dodatkową logikę wyboru!
-            return groups[0]
+            plugin.logger.debug("Vault groups for ${player.name}: $groups")
+            return groups
         }
         return "default"
     }
