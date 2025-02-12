@@ -1,8 +1,10 @@
 package pl.syntaxdevteam.formatter.basic
 
+import io.github.miniplaceholders.api.MiniPlaceholders
 import io.papermc.paper.event.player.AsyncChatEvent
 import me.clip.placeholderapi.PlaceholderAPI
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -12,6 +14,7 @@ import org.bukkit.event.Listener
 import pl.syntaxdevteam.formatter.FormatterX
 import pl.syntaxdevteam.formatter.common.MessageHandler
 import pl.syntaxdevteam.formatter.hooks.HookHandler
+
 
 /**
  * The [ChatFormatterListener] class is responsible for handling chat events and formatting the chat messages.
@@ -38,6 +41,7 @@ class ChatFormatterListener(
      *    - `group` - The primary group of the player retrieved from LuckPerms or Vault/VaultUnlocked.
      * 3. Processes the chat message:
      *    - `format` - Applies the formatting settings from the configuration.
+     *    - `resolver` – dynamic placeholder handling via `MiniPlaceholders`, if available.
      *    - `finalComponent` - Converts the formatted message into an Adventure Component.
      * 4. Sends the final formatted message to the server.
      *
@@ -45,15 +49,24 @@ class ChatFormatterListener(
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onChat(event: AsyncChatEvent) {
-        event.isCancelled = true  // Prevents the default chat processing
+        event.isCancelled = true
 
-        val player = event.player
+        val player: Player = event.player
         val messageContent = PlainTextComponentSerializer.plainText().serialize(event.message())
         val group = hookHandler.getPrimaryGroup(player)
         val format = generateChatFormat(player, group, messageContent)
         plugin.logger.debug("Chat format: $format")
-        val finalComponent: Component = messageHandler.formatMixedTextToMiniMessage(format)
 
+        val resolver = if (hookHandler.checkMiniPlaceholderAPI()) {
+            TagResolver.resolver(
+                MiniPlaceholders.getGlobalPlaceholders(),
+                MiniPlaceholders.getAudiencePlaceholders(player)
+            )
+        } else {
+            TagResolver.empty()
+        }
+
+        val finalComponent: Component = messageHandler.formatMixedTextToMiniMessage(format, resolver)
         Bukkit.getServer().sendMessage(finalComponent)
     }
 
@@ -96,10 +109,10 @@ class ChatFormatterListener(
         if (hookHandler.checkPlaceholderAPI()) {
             format = PlaceholderAPI.setPlaceholders(player, format)
         }
-
         return format
     }
 
+    //TODO: W późniejszym czasię użyję metodę filterMessageContent()
     private fun filterMessageContent(player: Player, message: String): String {
         var filteredMessage = message
 

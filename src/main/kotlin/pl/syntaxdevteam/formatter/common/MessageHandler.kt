@@ -4,6 +4,7 @@ package pl.syntaxdevteam.formatter.common
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
@@ -11,6 +12,7 @@ import org.bukkit.ChatColor
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
+import org.jetbrains.annotations.NotNull
 import pl.syntaxdevteam.formatter.FormatterX
 import java.io.File
 
@@ -422,18 +424,18 @@ class MessageHandler(private val plugin: FormatterX) {
     }
 
     /**
-     * Formats any text to MiniMessage, supporting Legacy (&), Bukkit (§), and HEX color codes.
+     * Formats mixed text containing Legacy, HEX, and Unicode escape sequences to an Adventure Component.
      *
      * @param message The message to format.
-     * @return An Adventure Component with proper MiniMessage formatting.
+     * @param resolver The TagResolver to use.
+     * @return An Adventure Component with proper formatting.
      */
-    fun formatMixedTextToMiniMessage(message: String): Component {
+    fun formatMixedTextToMiniMessage(message: String, resolver: TagResolver? = null): Component {
         var formattedMessage = convertSectionSignToMiniMessage(message)
         formattedMessage = convertLegacyToMiniMessage(formattedMessage)
         formattedMessage = convertHexToMiniMessage(formattedMessage)
         formattedMessage = convertUnicodeEscapeSequences(formattedMessage)
-
-        return MiniMessage.miniMessage().deserialize(formattedMessage)
+        return MiniMessage.miniMessage().deserialize(formattedMessage, resolver!!)
     }
 
 }

@@ -24,16 +24,19 @@ softdepend: [Folia]
 dependencies:
   server:
     PlaceholderAPI:
-      load: BEFORE #
+      load: BEFORE
+      required: false
+    MiniPlaceholders:
+      load: BEFORE
       required: false
     LuckPerms:
-      load: BEFORE #
+      load: BEFORE
       required: false
     Vault:
-      load: BEFORE #
+      load: BEFORE
       required: false
     VaultUnlocked:
-      load: BEFORE #
+      load: BEFORE
       required: false
 
 features:

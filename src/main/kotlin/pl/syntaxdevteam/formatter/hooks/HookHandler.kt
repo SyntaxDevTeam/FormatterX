@@ -99,7 +99,6 @@ class HookHandler(private val plugin: FormatterX) {
             return lpGroup
         }
         val groups = permission?.getPrimaryGroup(player)
-        //val groups = permission?.getPrimaryGroup(player.world.name, player)
         if (!groups.isNullOrEmpty()) {
             plugin.logger.debug("Vault groups for ${player.name}: $groups")
             return groups
@@ -170,6 +169,16 @@ class HookHandler(private val plugin: FormatterX) {
             return true
         } else {
             plugin.logger.warning("PlaceholderAPI plugin not found on server!")
+            return false
+        }
+    }
+
+    fun checkMiniPlaceholderAPI(): Boolean {
+        if(Bukkit.getPluginManager().isPluginEnabled("MiniPlaceholders")) {
+            plugin.logger.success("Hooked into MiniPlaceholders!")
+            return true
+        } else {
+            plugin.logger.warning("MiniPlaceholders plugin not found on server!")
             return false
         }
     }

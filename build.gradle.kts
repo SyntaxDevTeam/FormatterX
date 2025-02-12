@@ -32,6 +32,7 @@ dependencies {
     compileOnly("net.kyori:adventure-text-serializer-ansi:4.18.0")
     compileOnly("net.luckperms:api:5.4")
     compileOnly("me.clip:placeholderapi:2.11.6")
+    compileOnly("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.2.3")
     compileOnly("com.github.milkbowl:VaultAPI:1.7.1")
     compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.9")
 }
