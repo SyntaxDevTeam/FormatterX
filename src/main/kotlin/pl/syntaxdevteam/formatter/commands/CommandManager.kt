@@ -19,8 +19,8 @@ class CommandManager(private val plugin: FormatterX) {
                 FormatterXCommands(plugin)
             )
             commands.register(
-                "prx",
-                "formatterx plugin command. Type /prx help to check available commands",
+                "ftx",
+                "formatterx plugin command. Type /ftx help to check available commands",
                 FormatterXCommands(plugin)
             )
 
