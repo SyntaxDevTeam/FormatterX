@@ -15,38 +15,13 @@ import pl.syntaxdevteam.formatter.FormatterX
 import pl.syntaxdevteam.formatter.common.MessageHandler
 import pl.syntaxdevteam.formatter.hooks.HookHandler
 
-
-/**
- * The [ChatFormatterListener] class is responsible for handling chat events and formatting the chat messages.
- * It listens for chat events and processes the messages by applying the formatting settings from the configuration.
- *
- * @property plugin The instance of the FormatterX plugin, used for logging messages and accessing other plugin functionalities.
- * @property messageHandler The message handler used for formatting the chat messages.
- * @property hookHandler The hook handler used for retrieving player-specific data from external services.
- */
 class ChatFormatterListener(
     private val plugin: FormatterX,
     private val messageHandler: MessageHandler,
     private val hookHandler: HookHandler
 ) : Listener {
+    private val fpc: FormatPermissionChecker = FormatPermissionChecker
 
-    /**
-     * Handles the chat event by canceling it and formatting the message.
-     *
-     * This method does the following:
-     * 1. Cancels the event to prevent the default chat handling.
-     * 2. Extracts necessary information:
-     *    - `player` - The player who sent the message.
-     *    - `messageContent` - The raw message stripped of all formatting characters.
-     *    - `group` - The primary group of the player retrieved from LuckPerms or Vault/VaultUnlocked.
-     * 3. Processes the chat message:
-     *    - `format` - Applies the formatting settings from the configuration.
-     *    - `resolver` – dynamic placeholder handling via `MiniPlaceholders`, if available.
-     *    - `finalComponent` - Converts the formatted message into an Adventure Component.
-     * 4. Sends the final formatted message to the server.
-     *
-     * @param event The chat event being handled.
-     */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onChat(event: AsyncChatEvent) {
         event.isCancelled = true
@@ -70,14 +45,6 @@ class ChatFormatterListener(
         Bukkit.getServer().sendMessage(finalComponent)
     }
 
-    /**
-     * Generates the chat format for the player.
-     *
-     * @param player The player.
-     * @param group The player's group.
-     * @param messageContent The message content.
-     * @return The formatted chat message.
-     */
     private fun generateChatFormat(player: Player, group: String, messageContent: String): String {
         val prefix = hookHandler.getPlayerPrefix(player)
         val suffix = hookHandler.getPlayerSuffix(player)
@@ -88,11 +55,10 @@ class ChatFormatterListener(
         val prefixes = hookHandler.getAllLuckPermsMetData(player)?.prefixes?.values?.joinToString(prefixesSeparator) ?: ""
         val suffixes = hookHandler.getAllLuckPermsMetData(player)?.suffixes?.values?.joinToString(suffixesSeparator) ?: ""
 
-
         val displayName = PlainTextComponentSerializer.plainText().serialize(player.displayName())
         val playerName = player.name
         val worldName = player.world.name
-        //TODO: Dodać użycie filterMessageContent()
+        val filteredMessageContent = filterMessageContent(player, messageContent)
         var format = (plugin.config.getString("chat.group-formats.$group") ?: plugin.config.getString("chat.defaultFormat") ?: "${messageHandler.getPrefix()} {displayname} » {message}")
             .replace("{group}", group)
             .replace("{prefix}", prefix)
@@ -104,7 +70,7 @@ class ChatFormatterListener(
             .replace("{world}", worldName)
             .replace("{username-color}", usernameColor)
             .replace("{message-color}", messageColor)
-            .replace("{message}", messageContent)
+            .replace("{message}", filteredMessageContent)
 
         if (hookHandler.checkPlaceholderAPI()) {
             format = PlaceholderAPI.setPlaceholders(player, format)
@@ -112,37 +78,37 @@ class ChatFormatterListener(
         return format
     }
 
-    //TODO: W późniejszym czasię użyję metodę filterMessageContent()
+    /**
+     * Filterring message content based on player permissions
+     * @param player Player who sent the message
+     * @param message Message content
+     * @return Filtered message content
+     */
     private fun filterMessageContent(player: Player, message: String): String {
-        var filteredMessage = message
+        val filteredMessage = StringBuilder()
+        var i = 0
 
-        // Przykład filtrowania legacy kolorów:
-        // Znajdź wszystkie wystąpienia legacy tokenów (np. &x)
-        val legacyRegex = Regex("&([0-9a-fk-or])")
-        filteredMessage = legacyRegex.replace(filteredMessage) { matchResult ->
-            val token = "&" + matchResult.groupValues[1]
-            if (FormatPermissionChecker.canUseColorToken(player, token)) {
-                token  // Pozostawiam oryginalny token (który potem zostanie przekonwertowany na MiniMessage)
+        while (i < message.length) {
+            val char = message[i]
+            if (char == '&' && i + 1 < message.length) {
+                val token = message.substring(i, i + 2)
+                if (fpc.canUseColorToken(player, token) || fpc.canUseLegacyFormat(player, token)) {
+                    filteredMessage.append(token)
+                }
+                i += 2
+            } else if (char == '<' && message.indexOf('>', i) != -1) {
+                val endIndex = message.indexOf('>', i)
+                val token = message.substring(i, endIndex + 1)
+                if (fpc.canUseColorToken(player, token) || fpc.canUseMinimessageFormat(player, token) || fpc.canUseMinimessageColors(player)) {
+                    filteredMessage.append(token)
+                }
+                i = endIndex + 1
             } else {
-                "" // Usuń token, jeśli gracz nie ma uprawnień
+                filteredMessage.append(char)
+                i++
             }
         }
 
-        // Analogicznie możesz filtrować tokeny minimessage lub RGB, jeśli są obecne.
-
-        // Przykład filtrowania formatowania (np. <bold>):
-        val formatRegex = Regex("<(bold|italic|underlined|strikethrough|obfuscated|reset)>")
-        filteredMessage = formatRegex.replace(filteredMessage) { matchResult ->
-            val token = "<" + matchResult.groupValues[1] + ">"
-            when (matchResult.groupValues[1].lowercase()) {
-                "bold" -> if (FormatPermissionChecker.canUseBold(player)) token else ""
-                "italic" -> if (FormatPermissionChecker.canUseItalic(player)) token else ""
-                // TODO: Dodać kolejne przypadki dla innych formatów
-                else -> token
-            }
-        }
-
-        return filteredMessage
+        return filteredMessage.toString()
     }
-
 }
