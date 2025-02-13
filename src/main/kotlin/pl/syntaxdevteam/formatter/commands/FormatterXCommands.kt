@@ -11,11 +11,11 @@ class FormatterXCommands(private val plugin: FormatterX) : BasicCommand {
     private val mH = plugin.messageHandler
 
     override fun execute(@NotNull stack: CommandSourceStack, @NotNull args: Array<String>) {
-        if (!stack.sender.hasPermission("formatterx.help") ||
-            !stack.sender.hasPermission("formatterx.version") ||
-            !stack.sender.hasPermission("formatterx.reload") ||
-            !stack.sender.hasPermission("formatterx.export") ||
-            !stack.sender.hasPermission("formatterx.import")) {
+        if (!stack.sender.hasPermission("formatterx.cmd.help") ||
+            !stack.sender.hasPermission("formatterx.cmd.version") ||
+            !stack.sender.hasPermission("formatterx.cmd.reload") ||
+            !stack.sender.hasPermission("formatterx.cmd.export") ||
+            !stack.sender.hasPermission("formatterx.cmd.import")) {
             stack.sender.sendMessage(plugin.messageHandler.getMessage("error", "no_permission"))
             return
         }
@@ -24,7 +24,7 @@ class FormatterXCommands(private val plugin: FormatterX) : BasicCommand {
         if (args.isNotEmpty()) {
             when {
                 args[0].equals("help", ignoreCase = true) -> {
-                    if (stack.sender.hasPermission("formatterx.help")) {
+                    if (stack.sender.hasPermission("formatterx.cmd.help")) {
                         val page = args.getOrNull(1)?.toIntOrNull() ?: 1
                         sendHelp(stack, page)
                     } else {
@@ -32,7 +32,7 @@ class FormatterXCommands(private val plugin: FormatterX) : BasicCommand {
                     }
                 }
                 args[0].equals("version", ignoreCase = true) -> {
-                    if (stack.sender.hasPermission("formatterx.version")) {
+                    if (stack.sender.hasPermission("formatterx.cmd.version")) {
                         stack.sender.sendMessage(mH.miniMessageFormat("\n<gray>-------------------------------------------------\n" +
                                 " <gray>|\n" +
                                 " <gray>|   <gold>→ <bold>" + pluginMeta.name + "</bold> ←\n" +
@@ -46,27 +46,28 @@ class FormatterXCommands(private val plugin: FormatterX) : BasicCommand {
                     }
                 }
                 args[0].equals("reload", ignoreCase = true) -> {
-                    if (stack.sender.hasPermission("formatterx.reload")) {
+                    if (stack.sender.hasPermission("formatterx.cmd.reload")) {
                         plugin.onReload()
                         stack.sender.sendMessage(mH.getMessage("formatterx", "reload"))
                     } else {
                         stack.sender.sendMessage(mH.getMessage("error", "no_permission"))
                     }
                 }
+                /*
                 args[0].equals("export", ignoreCase = true) -> {
-                    if (stack.sender.hasPermission("formatterx.export")) {
+                    if (stack.sender.hasPermission("formatterx.cmd.export")) {
                         //plugin.databaseHandler.exportDatabase()
                     } else {
                         stack.sender.sendMessage(mH.getMessage("error", "no_permission"))
                     }
                 }
                 args[0].equals("import", ignoreCase = true) -> {
-                    if (stack.sender.hasPermission("formatterx.import")) {
+                    if (stack.sender.hasPermission("formatterx.cmd.import")) {
                         //plugin.databaseHandler.importDatabase()
                     } else {
                         stack.sender.sendMessage(mH.getMessage("error", "no_permission"))
                     }
-                }
+                }*/
             }
         } else {
             stack.sender.sendMessage(mH.miniMessageFormat("<green>Type </green><gold>/formatterx help</gold> <green>to see available commands</green>"))
