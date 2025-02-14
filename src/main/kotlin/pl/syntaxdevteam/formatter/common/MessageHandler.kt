@@ -146,7 +146,7 @@ class MessageHandler(private val plugin: FormatterX) {
             acc.replace("{${entry.key}}", entry.value)
         }
         val mixMessage =  "$prefix $formattedMessage"
-        return formatMixedTextToMiniMessage(mixMessage)
+        return formatMixedTextToMiniMessage(mixMessage, TagResolver.empty())
     }
 
     /**
@@ -204,7 +204,7 @@ class MessageHandler(private val plugin: FormatterX) {
         val formattedMessage = placeholders.entries.fold(message) { acc, entry ->
             acc.replace("{${entry.key}}", entry.value)
         }
-        return formatMixedTextToMiniMessage(formattedMessage)
+        return formatMixedTextToMiniMessage(formattedMessage, TagResolver.empty())
     }
 
     /**
@@ -225,7 +225,7 @@ class MessageHandler(private val plugin: FormatterX) {
             val formattedMessage = placeholders.entries.fold(message) { acc, entry ->
                 acc.replace("{${entry.key}}", entry.value)
             }
-            formatMixedTextToMiniMessage(formattedMessage)
+            formatMixedTextToMiniMessage(formattedMessage, TagResolver.empty())
         }
     }
 
@@ -429,12 +429,16 @@ class MessageHandler(private val plugin: FormatterX) {
      * @param resolver The TagResolver to use.
      * @return An Adventure Component with proper formatting.
      */
-    fun formatMixedTextToMiniMessage(message: String, resolver: TagResolver? = null): Component {
+    fun formatMixedTextToMiniMessage(message: String, resolver: TagResolver?): Component {
         var formattedMessage = convertSectionSignToMiniMessage(message)
         formattedMessage = convertLegacyToMiniMessage(formattedMessage)
         formattedMessage = convertHexToMiniMessage(formattedMessage)
         formattedMessage = convertUnicodeEscapeSequences(formattedMessage)
-        return MiniMessage.miniMessage().deserialize(formattedMessage, resolver!!)
+        return if (resolver != null) {
+            MiniMessage.miniMessage().deserialize(formattedMessage, resolver)
+        }else{
+            MiniMessage.miniMessage().deserialize(formattedMessage)
+        }
     }
 
 }
