@@ -18,10 +18,22 @@ import pl.syntaxdevteam.formatter.FormatterX
  */
 class HookHandler(private val plugin: FormatterX) {
 
+
     private var luckPerms: LuckPerms? = null
     private var chat: Chat? = null
     private var permission: Permission? = null
 
+    private var isLuckPermsHooked = false
+    private var isVaultHooked = false
+    private var isVaultUnlockedHooked = false
+    private var isPlaceholderAPIHooked = false
+    private var isMiniPlaceholdersHooked = false
+
+    /**
+     * Initializes the HookHandler by checking if the required services are available on the server.
+     * If the services are found, they are hooked into, and success messages are logged.
+     * If the services are not found, warning messages are logged.
+     */
     init {
         checkPlaceholderAPI()
         checkLuckPerms()
@@ -32,27 +44,30 @@ class HookHandler(private val plugin: FormatterX) {
     }
 
     /**
-     * Checks if the LuckPerms plugin is enabled on the server and retrieves the LuckPerms API if available.
-     * If LuckPerms is found, it is hooked into, and a success message is logged. If not, a warning is logged.
+     * Checks if the LuckPerms service is available on the server.
+     * If the service is found, it is hooked into, and a success message is logged.
+     * If the service is not found, a warning message is logged.
      */
     private fun checkLuckPerms() {
-        if (Bukkit.getPluginManager().isPluginEnabled("LuckPerms")) {
+        if (!isLuckPermsHooked && Bukkit.getPluginManager().isPluginEnabled("LuckPerms")) {
             val provider = Bukkit.getServicesManager().getRegistration(LuckPerms::class.java)
             if (provider != null) {
                 luckPerms = provider.provider
                 plugin.logger.success("Hooked into LuckPerms!")
+                isLuckPermsHooked = true
             }
-        } else {
+        } else if (!isLuckPermsHooked) {
             plugin.logger.warning("LuckPerms plugin not found on server!")
         }
     }
 
     /**
-     * Checks if the Vault plugin is enabled on the server and retrieves the Vault chat and permission services if available.
-     * If Vault is found, it is hooked into, and a success message is logged. If not, a warning is logged.
+     * Checks if the Vault service is available on the server.
+     * If the service is found, it is hooked into, and a success message is logged.
+     * If the service is not found, a warning message is logged.
      */
     private fun checkVault() {
-        if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
+        if (!isVaultHooked && Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             val chatProvider = Bukkit.getServicesManager().getRegistration(Chat::class.java)
             val permProvider = Bukkit.getServicesManager().getRegistration(Permission::class.java)
 
@@ -60,18 +75,20 @@ class HookHandler(private val plugin: FormatterX) {
                 chat = chatProvider.provider
                 permission = permProvider.provider
                 plugin.logger.success("Hooked into Vault!")
+                isVaultHooked = true
             }
-        } else {
+        } else if (!isVaultHooked) {
             plugin.logger.warning("Vault plugin not found on server!")
         }
     }
 
     /**
-     * Checks if the VaultUnlocked plugin is enabled on the server and retrieves the VaultUnlocked chat and permission services if available.
-     * If VaultUnlocked is found, it is hooked into, and a success message is logged. If not, a warning is logged.
+     * Checks if the VaultUnlocked service is available on the server.
+     * If the service is found, it is hooked into, and a success message is logged.
+     * If the service is not found, a warning message is logged.
      */
     private fun checkVaultUnlocked() {
-        if (Bukkit.getPluginManager().isPluginEnabled("VaultUnlocked")) {
+        if (!isVaultUnlockedHooked && Bukkit.getPluginManager().isPluginEnabled("VaultUnlocked")) {
             val chatProvider = Bukkit.getServicesManager().getRegistration(Chat::class.java)
             val permProvider = Bukkit.getServicesManager().getRegistration(Permission::class.java)
 
@@ -79,10 +96,43 @@ class HookHandler(private val plugin: FormatterX) {
                 chat = chatProvider.provider
                 permission = permProvider.provider
                 plugin.logger.success("Hooked into VaultUnlocked!")
+                isVaultUnlockedHooked = true
             }
-        } else {
+        } else if (!isVaultUnlockedHooked) {
             plugin.logger.warning("VaultUnlocked plugin not found on server!")
         }
+    }
+
+    /**
+     * Checks if the PlaceholderAPI service is available on the server.
+     * If the service is found, it is hooked into, and a success message is logged.
+     * If the service is not found, a warning message is logged.
+     */
+    fun checkPlaceholderAPI(): Boolean {
+        if (!isPlaceholderAPIHooked && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            plugin.logger.success("Hooked into PlaceholderAPI!")
+            isPlaceholderAPIHooked = true
+            return true
+        } else if (!isPlaceholderAPIHooked) {
+            plugin.logger.warning("PlaceholderAPI plugin not found on server!")
+        }
+        return false
+    }
+
+    /**
+     * Checks if the MiniPlaceholders service is available on the server.
+     * If the service is found, it is hooked into, and a success message is logged.
+     * If the service is not found, a warning message is logged.
+     */
+    fun checkMiniPlaceholderAPI(): Boolean {
+        if (!isMiniPlaceholdersHooked && Bukkit.getPluginManager().isPluginEnabled("MiniPlaceholders")) {
+            plugin.logger.success("Hooked into MiniPlaceholders!")
+            isMiniPlaceholdersHooked = true
+            return true
+        } else if (!isMiniPlaceholdersHooked) {
+            plugin.logger.warning("MiniPlaceholders plugin not found on server!")
+        }
+        return false
     }
 
     /**
@@ -154,32 +204,5 @@ class HookHandler(private val plugin: FormatterX) {
      */
     fun getAllLuckPermsMetData(player: Player): CachedMetaData? {
         return luckPerms?.getPlayerAdapter(Player::class.java)?.getMetaData(player)
-    }
-
-    /**
-     * Checks if the PlaceholderAPI plugin is enabled on the server.
-     * If PlaceholderAPI is found, a success message is logged, and true is returned.
-     * If not, a warning is logged, and false is returned.
-     *
-     * @return True if PlaceholderAPI is found, false otherwise.
-     */
-    fun checkPlaceholderAPI(): Boolean {
-        if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            plugin.logger.success("Hooked into PlaceholderAPI!")
-            return true
-        } else {
-            plugin.logger.warning("PlaceholderAPI plugin not found on server!")
-            return false
-        }
-    }
-
-    fun checkMiniPlaceholderAPI(): Boolean {
-        if(Bukkit.getPluginManager().isPluginEnabled("MiniPlaceholders")) {
-            plugin.logger.success("Hooked into MiniPlaceholders!")
-            return true
-        } else {
-            plugin.logger.warning("MiniPlaceholders plugin not found on server!")
-            return false
-        }
     }
 }
