@@ -94,7 +94,7 @@ object FormatPermissionChecker {
      * @param player Gracz, którego uprawnienia zostaną sprawdzone
      * @return true, jeśli gracz ma uprawnienia do używania MiniPlaceholder
      */
-    private fun canUseMiniPlaceholder(player: Player): Boolean {
+    fun canUseMiniPlaceholder(player: Player): Boolean {
         return player.hasPermission("formatterx.placeholder.minipapi") || canUsePlaceholders(player)
     }
 
