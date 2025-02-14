@@ -12,7 +12,6 @@ import org.bukkit.ChatColor
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
-import org.jetbrains.annotations.NotNull
 import pl.syntaxdevteam.formatter.FormatterX
 import java.io.File
 
