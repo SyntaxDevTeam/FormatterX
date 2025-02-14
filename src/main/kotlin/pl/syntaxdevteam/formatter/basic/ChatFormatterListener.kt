@@ -15,6 +15,14 @@ import pl.syntaxdevteam.formatter.FormatterX
 import pl.syntaxdevteam.formatter.common.MessageHandler
 import pl.syntaxdevteam.formatter.hooks.HookHandler
 
+/**
+ * The `ChatFormatterListener` class is responsible for handling chat messages sent by players.
+ * It listens for chat events and formats the messages according to the plugin configuration.
+ *
+ * @property plugin The instance of the `FormatterX` plugin, used for logging messages and accessing other plugin functionalities.
+ * @property messageHandler The message handler instance, used for formatting messages and handling placeholders.
+ * @property hookHandler The hook handler instance, used for retrieving player-specific data from external services.
+ */
 class ChatFormatterListener(
     private val plugin: FormatterX,
     private val messageHandler: MessageHandler,
@@ -22,6 +30,13 @@ class ChatFormatterListener(
 ) : Listener {
     private val fpc: FormatPermissionChecker = FormatPermissionChecker
 
+    /**
+     * Event handler for chat messages.
+     * This method is triggered when a player sends a chat message.
+     * It cancels the original chat event and formats the message according to the plugin's configuration.
+     *
+     * @param event The `AsyncChatEvent` that contains information about the chat message.
+     */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onChat(event: AsyncChatEvent) {
         event.isCancelled = true
@@ -45,6 +60,15 @@ class ChatFormatterListener(
         Bukkit.getServer().sendMessage(finalComponent)
     }
 
+    /**
+     * Generates the chat format for a player.
+     * This method retrieves various placeholders and formats the chat message according to the plugin's configuration.
+     *
+     * @param player The player who sent the message.
+     * @param group The player's primary group.
+     * @param messageContent The content of the message sent by the player.
+     * @return The formatted chat message as a string.
+     */
     private fun generateChatFormat(player: Player, group: String, messageContent: String): String {
         val prefix = hookHandler.getPlayerPrefix(player)
         val suffix = hookHandler.getPlayerSuffix(player)
@@ -79,10 +103,13 @@ class ChatFormatterListener(
     }
 
     /**
-     * Filterring message content based on player permissions
-     * @param player Player who sent the message
-     * @param message Message content
-     * @return Filtered message content
+     * Filters the message content based on player permissions.
+     * This method checks if the player has permission to use certain color codes, formats, and placeholders in their message.
+     * It iterates through the message and appends allowed tokens to the filtered message.
+     *
+     * @param player The player who sent the message.
+     * @param message The content of the message sent by the player.
+     * @return The filtered message content as a string.
      */
     private fun filterMessageContent(player: Player, message: String): String {
         val filteredMessage = StringBuilder()
@@ -100,6 +127,13 @@ class ChatFormatterListener(
                 val endIndex = message.indexOf('>', i)
                 val token = message.substring(i, endIndex + 1)
                 if (fpc.canUseColorToken(player, token) || fpc.canUseMinimessageFormat(player, token) || fpc.canUseMinimessageColors(player)) {
+                    filteredMessage.append(token)
+                }
+                i = endIndex + 1
+            } else if (char == '%' && message.indexOf('%', i + 1) != -1) {
+                val endIndex = message.indexOf('%', i + 1)
+                val token = message.substring(i, endIndex + 1)
+                if (fpc.canUsePapi(player)) {
                     filteredMessage.append(token)
                 }
                 i = endIndex + 1
