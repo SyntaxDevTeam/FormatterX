@@ -14,6 +14,7 @@ import org.bukkit.event.Listener
 import pl.syntaxdevteam.formatter.FormatterX
 import pl.syntaxdevteam.formatter.common.MessageHandler
 import pl.syntaxdevteam.formatter.hooks.HookHandler
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * The `ChatFormatterListener` class is responsible for handling chat messages sent by players.
@@ -29,6 +30,7 @@ class ChatFormatterListener(
     private val hookHandler: HookHandler
 ) : Listener {
     private val fpc: FormatPermissionChecker = FormatPermissionChecker
+    private val resolverCache = ConcurrentHashMap<Player, TagResolver>()
 
     /**
      * Event handler for chat messages.
@@ -47,14 +49,16 @@ class ChatFormatterListener(
         val format = generateChatFormat(player, group, messageContent)
         plugin.logger.debug("Chat format: $format")
 
-        val resolver = if (hookHandler.checkMiniPlaceholderAPI()) {
-            TagResolver.resolver(
-                MiniPlaceholders.getGlobalPlaceholders(),
-                MiniPlaceholders.getAudiencePlaceholders(player)
-            )
-        } else {
-            TagResolver.empty()
+        val resolver = resolverCache.computeIfAbsent(player) {
+            plugin.logger.debug("Creating new resolver for ${player.name}")
+
+            if (hookHandler.checkMiniPlaceholderAPI()) {
+                TagResolver.resolver(MiniPlaceholders.getAudiencePlaceholders(player))
+            } else {
+                TagResolver.empty()
+            }
         }
+        plugin.logger.debug("Using cached resolver for ${player.name}")
 
         val finalComponent: Component = messageHandler.formatMixedTextToMiniMessage(format, resolver)
         Bukkit.getServer().sendMessage(finalComponent)
@@ -112,25 +116,56 @@ class ChatFormatterListener(
      * @return The filtered message content as a string.
      */
     private fun filterMessageContent(player: Player, message: String): String {
+        // Lista dozwolonych tagów MiniMessage
+        val allowedMiniMessageTags = setOf(
+            "black", "dark_blue", "dark_green", "dark_aqua", "dark_red",
+            "red", "purple", "gold", "gray", "dark_gray", "blue",
+            "green", "aqua", "pink", "yellow", "white",
+            "bold", "italic", "underlined", "strikethrough", "magic", "reset",
+            "rainbow", "gradient", "click", "hover", "font", "insertion",
+            "keybind", "translatable", "selector"
+        )
+
         val filteredMessage = StringBuilder()
         var i = 0
 
         while (i < message.length) {
             val char = message[i]
             if (char == '&' && i + 1 < message.length) {
+                // Obsługa legacy kolorów
                 val token = message.substring(i, i + 2)
                 if (fpc.canUseColorToken(player, token) || fpc.canUseLegacyFormat(player, token)) {
                     filteredMessage.append(token)
                 }
                 i += 2
-            } else if (char == '<' && message.indexOf('>', i) != -1) {
+            } else if (char == '<') {
+                // Znajdź koniec tagu
                 val endIndex = message.indexOf('>', i)
-                val token = message.substring(i, endIndex + 1)
-                if (fpc.canUseColorToken(player, token) || fpc.canUseMinimessageFormat(player, token) || fpc.canUseMinimessageColors(player)) {
-                    filteredMessage.append(token)
+                if (endIndex != -1) {
+                    val token = message.substring(i, endIndex + 1) // np. "<luckperms_prefix>" lub "<red>"
+                    // Wyciągnij nazwę tagu (do pierwszego dwukropka, jeśli istnieje)
+                    val tagContent = token.substring(1, token.length - 1) // np. "luckperms_prefix" lub "red"
+                    val tagName = tagContent.substringBefore(':').lowercase()
+
+                    if (allowedMiniMessageTags.contains(tagName)) {
+                        // To dozwolony tag MiniMessage – zawsze przepuść
+                        filteredMessage.append(token)
+                    } else {
+                        // To placeholder MiniPlaceholder – sprawdź uprawnienia
+                        if (fpc.canUseMiniPlaceholder(player)) {
+                            filteredMessage.append(token)
+                        } else {
+                            // Brak uprawnień – usuń token (możesz też zastąpić go np. pustym ciągiem)
+                            filteredMessage.append("")
+                        }
+                    }
+                    i = endIndex + 1
+                } else {
+                    filteredMessage.append(char)
+                    i++
                 }
-                i = endIndex + 1
             } else if (char == '%' && message.indexOf('%', i + 1) != -1) {
+                // Obsługa tokenów z PlaceholderAPI
                 val endIndex = message.indexOf('%', i + 1)
                 val token = message.substring(i, endIndex + 1)
                 if (fpc.canUsePapi(player)) {
