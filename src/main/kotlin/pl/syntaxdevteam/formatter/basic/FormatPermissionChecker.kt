@@ -72,6 +72,33 @@ object FormatPermissionChecker {
     }
 
     /**
+     * Sprawdzenie uprawnień do użycia wszystkich typów placeholderów
+     * @param player Gracz, którego uprawnienia zostaną sprawdzone
+     * @return true, jeśli gracz ma uprawnienia do używania placeholderów
+     */
+    private fun canUsePlaceholders(player: Player): Boolean {
+        return player.hasPermission("formatterx.placeholder.all")
+    }
+
+    /**
+     * Sprawdzenie uprawnień do użycia PlaceholderAPI
+     * @param player Gracz, którego uprawnienia zostaną sprawdzone
+     * @return true, jeśli gracz ma uprawnienia do używania PlaceholderAPI
+     */
+    fun canUsePapi(player: Player): Boolean {
+        return player.hasPermission("formatterx.placeholder.papi") || canUsePlaceholders(player)
+    }
+
+    /**
+     * Sprawdzenie uprawnień do użycia MiniPlaceholder
+     * @param player Gracz, którego uprawnienia zostaną sprawdzone
+     * @return true, jeśli gracz ma uprawnienia do używania MiniPlaceholder
+     */
+    private fun canUseMiniPlaceholder(player: Player): Boolean {
+        return player.hasPermission("formatterx.placeholder.minipapi") || canUsePlaceholders(player)
+    }
+
+    /**
      * Sprawdzenie uprawnień dla kolorów (Legacy)
      * @param player Gracz, którego uprawnienia zostaną sprawdzone
      * @param colorToken Token koloru
