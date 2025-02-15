@@ -1,11 +1,11 @@
 plugins {
     kotlin("jvm") version "2.1.10"
-    id("com.gradleup.shadow") version "9.0.0-beta7"
+    id("com.gradleup.shadow") version "9.0.0-beta8"
 }
 
 group = "pl.syntaxdevteam.formatter"
-version = "1.0-SNAPSHOT"
-description = "The intelligent chat formatting plugin with minimessages support!"
+version = "Pre-Releasce-1"
+description = "The intelligent chat formatting plugin with LuckPerms, PlaceholderAPI, MiniPlaceholder, Vault and VaultUnlocked support!"
 
 repositories {
     mavenCentral()
