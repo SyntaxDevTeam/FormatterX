@@ -100,8 +100,12 @@ class ChatFormatterListener(
             .replace("{message-color}", messageColor)
             .replace("{message}", filteredMessageContent)
 
+        format = messageHandler.convertSectionSignToMiniMessage(format)
+        plugin.logger.debug("Chat format after basic placeholder: $format")
+        plugin.logger.debug("PAPI: ${hookHandler.checkPlaceholderAPI()}")
         if (hookHandler.checkPlaceholderAPI()) {
             format = PlaceholderAPI.setPlaceholders(player, format)
+            plugin.logger.debug("Chat format after PlaceholderAPI: $format")
         }
         return format
     }
@@ -132,6 +136,13 @@ class ChatFormatterListener(
         while (i < message.length) {
             val char = message[i]
             if (char == '&' && i + 1 < message.length) {
+                // Obsługa legacy kolorów
+                val token = message.substring(i, i + 2)
+                if (fpc.canUseColorToken(player, token) || fpc.canUseLegacyFormat(player, token)) {
+                    filteredMessage.append(token)
+                }
+                i += 2
+            } else if (char == '§' && i + 1 < message.length) {
                 // Obsługa legacy kolorów
                 val token = message.substring(i, i + 2)
                 if (fpc.canUseColorToken(player, token) || fpc.canUseLegacyFormat(player, token)) {
