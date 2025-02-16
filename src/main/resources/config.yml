@@ -1,17 +1,24 @@
 # Please read the https://luckperms.net/wiki/Prefixes,-Suffixes-&-Meta before you set up.
 #
-# Placeholders:
-# {message} - the chat message
-# {name} - the player's name
-# {displayname} - the player's display name / nickname
-# {world} - the world name of the player's current world
-# {prefix} - the player's highest priority prefix
-# {suffix} - the player's highest priority suffix
-# {prefixes} - the player's prefixes sorted by the highest priority
-# {suffixes} - the player's suffixes sorted by the highest priority
-# {username-color} - the player's or the group's username color
-# {message-color} - the player's or the group's message color
-# {group} - the player's primary group
+# These placeholders can be used in the chat format settings:
+#
+#  {message} - The chat message.
+#  {name} - The player's name.
+#  {displayname} - The player's display name or nickname.
+#  {world} - The name of the player's current world.
+#
+#     Available using LuckPerms and Vault/VaultUnlocked:
+#  {prefix} - The player's highest priority prefix.
+#  {suffix} - The player's highest priority suffix.
+#  {prefixes} - The player's prefixes sorted by the highest priority.
+#  {suffixes} - The player's suffixes sorted by the highest priority.
+#  {group} - The player's primary group.
+#
+#    Only LuckPerms:
+#  {username-color} - The player's or the group's username color.
+#  {message-color} - The player's or the group's message color.
+
+# For more setting options, visit: https://github.com/SyntaxDevTeam/FormatterX/wiki
 
 # Chat format settings
 chat:
@@ -27,17 +34,17 @@ chat:
 
 
 
-# Plugin language selection. Possible values:  EN, PL, ES, FR, DE
+# Plugin language selection. Possible values:  EN, PL
 # If you would like to add your own language file, please contact us on Discord (https://discord.gg/Zk6mxv7eMh).
 language: "PL"
 
 # Update check and auto-update settings
 checkForUpdates: true
-autoDownloadUpdates: true
+autoDownloadUpdates: false
 
 # Debug mode set to true provides more detailed logs in the console
-debug: true
+debug: false
 
 # Should StatsCollector be enabled? Recommended setting: true
 stats:
-  enabled: false
+  enabled: true
