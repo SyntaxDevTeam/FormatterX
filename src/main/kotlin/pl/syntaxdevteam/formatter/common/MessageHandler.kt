@@ -365,35 +365,60 @@ class MessageHandler(private val plugin: FormatterX) {
     }
 
     /**
-     * Converts Bukkit section signs (§) to MiniMessage format.
+     * Converts Bukkit Legacy (§) color codes to MiniMessage format.
      *
      * @param message The message to convert.
      * @return The message in MiniMessage format.
      */
-    private fun convertSectionSignToMiniMessage(message: String): String {
-        return message
-            .replace("§0", "<black>")
-            .replace("§1", "<dark_blue>")
-            .replace("§2", "<dark_green>")
-            .replace("§3", "<dark_aqua>")
-            .replace("§4", "<dark_red>")
-            .replace("§5", "<dark_purple>")
-            .replace("§6", "<gold>")
-            .replace("§7", "<gray>")
-            .replace("§8", "<dark_gray>")
-            .replace("§9", "<blue>")
-            .replace("§a", "<green>")
-            .replace("§b", "<aqua>")
-            .replace("§c", "<red>")
-            .replace("§d", "<light_purple>")
-            .replace("§e", "<yellow>")
-            .replace("§f", "<white>")
-            .replace("§k", "<obfuscated>")
-            .replace("§l", "<bold>")
-            .replace("§m", "<strikethrough>")
-            .replace("§n", "<underlined>")
-            .replace("§o", "<italic>")
-            .replace("§r", "<reset>")
+    fun convertSectionSignToMiniMessage(message: String): String {
+        val sectionMap = mapOf(
+            "§0" to "<black>",
+            "§1" to "<dark_blue>",
+            "§2" to "<dark_green>",
+            "§3" to "<dark_aqua>",
+            "§4" to "<dark_red>",
+            "§5" to "<dark_purple>",
+            "§6" to "<gold>",
+            "§7" to "<gray>",
+            "§8" to "<dark_gray>",
+            "§9" to "<blue>",
+            "§a" to "<green>",
+            "§b" to "<aqua>",
+            "§c" to "<red>",
+            "§d" to "<light_purple>",
+            "§e" to "<yellow>",
+            "§f" to "<white>",
+            "§k" to "<obfuscated>",
+            "§l" to "<bold>",
+            "§m" to "<strikethrough>",
+            "§n" to "<underlined>",
+            "§o" to "<italic>",
+            "§r" to "<reset>"
+        )
+
+        fun processSection(segment: String): String {
+            return segment.replace(Regex("§([0-9a-fklmnor])")) { matchResult ->
+                sectionMap["§${matchResult.groupValues[1]}"] ?: matchResult.value
+            }
+        }
+
+        val pattern = Regex("(<[^>]+>|\\{[^}]+})")
+        val result = StringBuilder()
+        var lastIndex = 0
+
+        for (match in pattern.findAll(message)) {
+            val start = match.range.first
+            if (start > lastIndex) {
+                val nonTag = message.substring(lastIndex, start)
+                result.append(processSection(nonTag))
+            }
+            result.append(match.value)
+            lastIndex = match.range.last + 1
+        }
+        if (lastIndex < message.length) {
+            result.append(processSection(message.substring(lastIndex)))
+        }
+        return result.toString()
     }
 
     /**
