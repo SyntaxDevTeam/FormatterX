@@ -23,12 +23,6 @@ class HookHandler(private val plugin: FormatterX) {
     private var chat: Chat? = null
     private var permission: Permission? = null
 
-    private var isLuckPermsHooked = false
-    private var isVaultHooked = false
-    private var isVaultUnlockedHooked = false
-    private var isPlaceholderAPIHooked = false
-    private var isMiniPlaceholdersHooked = false
-
     /**
      * Initializes the HookHandler by checking if the required services are available on the server.
      * If the services are found, they are hooked into, and success messages are logged.
@@ -49,14 +43,13 @@ class HookHandler(private val plugin: FormatterX) {
      * If the service is not found, a warning message is logged.
      */
     private fun checkLuckPerms() {
-        if (!isLuckPermsHooked && Bukkit.getPluginManager().isPluginEnabled("LuckPerms")) {
+        if (Bukkit.getPluginManager().isPluginEnabled("LuckPerms")) {
             val provider = Bukkit.getServicesManager().getRegistration(LuckPerms::class.java)
             if (provider != null) {
                 luckPerms = provider.provider
-                plugin.logger.success("Hooked into LuckPerms!")
-                isLuckPermsHooked = true
+                plugin.logger.debug("Hooked into LuckPerms!")
             }
-        } else if (!isLuckPermsHooked) {
+        } else {
             plugin.logger.warning("LuckPerms plugin not found on server!")
         }
     }
@@ -67,17 +60,16 @@ class HookHandler(private val plugin: FormatterX) {
      * If the service is not found, a warning message is logged.
      */
     private fun checkVault() {
-        if (!isVaultHooked && Bukkit.getPluginManager().isPluginEnabled("Vault")) {
+        if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             val chatProvider = Bukkit.getServicesManager().getRegistration(Chat::class.java)
             val permProvider = Bukkit.getServicesManager().getRegistration(Permission::class.java)
 
             if (chatProvider != null && permProvider != null) {
                 chat = chatProvider.provider
                 permission = permProvider.provider
-                plugin.logger.success("Hooked into Vault!")
-                isVaultHooked = true
+                plugin.logger.debug("Hooked into Vault!")
             }
-        } else if (!isVaultHooked) {
+        } else {
             plugin.logger.warning("Vault plugin not found on server!")
         }
     }
@@ -88,17 +80,16 @@ class HookHandler(private val plugin: FormatterX) {
      * If the service is not found, a warning message is logged.
      */
     private fun checkVaultUnlocked() {
-        if (!isVaultUnlockedHooked && Bukkit.getPluginManager().isPluginEnabled("VaultUnlocked")) {
+        if (Bukkit.getPluginManager().isPluginEnabled("VaultUnlocked")) {
             val chatProvider = Bukkit.getServicesManager().getRegistration(Chat::class.java)
             val permProvider = Bukkit.getServicesManager().getRegistration(Permission::class.java)
 
             if (chatProvider != null && permProvider != null) {
                 chat = chatProvider.provider
                 permission = permProvider.provider
-                plugin.logger.success("Hooked into VaultUnlocked!")
-                isVaultUnlockedHooked = true
+                plugin.logger.debug("Hooked into VaultUnlocked!")
             }
-        } else if (!isVaultUnlockedHooked) {
+        } else {
             plugin.logger.warning("VaultUnlocked plugin not found on server!")
         }
     }
@@ -109,14 +100,13 @@ class HookHandler(private val plugin: FormatterX) {
      * If the service is not found, a warning message is logged.
      */
     fun checkPlaceholderAPI(): Boolean {
-        if (!isPlaceholderAPIHooked && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            plugin.logger.success("Hooked into PlaceholderAPI!")
-            isPlaceholderAPIHooked = true
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            plugin.logger.debug("Hooked into PlaceholderAPI!")
             return true
-        } else if (!isPlaceholderAPIHooked) {
+        } else {
             plugin.logger.warning("PlaceholderAPI plugin not found on server!")
+            return false
         }
-        return false
     }
 
     /**
@@ -125,14 +115,14 @@ class HookHandler(private val plugin: FormatterX) {
      * If the service is not found, a warning message is logged.
      */
     fun checkMiniPlaceholderAPI(): Boolean {
-        if (!isMiniPlaceholdersHooked && Bukkit.getPluginManager().isPluginEnabled("MiniPlaceholders")) {
-            plugin.logger.success("Hooked into MiniPlaceholders!")
-            isMiniPlaceholdersHooked = true
+        if (Bukkit.getPluginManager().isPluginEnabled("MiniPlaceholders")) {
+            plugin.logger.debug("Hooked into MiniPlaceholders!")
             return true
-        } else if (!isMiniPlaceholdersHooked) {
+        } else {
             plugin.logger.warning("MiniPlaceholders plugin not found on server!")
+            return false
         }
-        return false
+
     }
 
     /**
