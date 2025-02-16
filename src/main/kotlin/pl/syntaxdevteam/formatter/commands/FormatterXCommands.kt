@@ -33,14 +33,14 @@ class FormatterXCommands(private val plugin: FormatterX) : BasicCommand {
                 }
                 args[0].equals("version", ignoreCase = true) -> {
                     if (stack.sender.hasPermission("formatterx.cmd.version")) {
-                        stack.sender.sendMessage(mH.miniMessageFormat("\n<gray>-------------------------------------------------\n" +
+                        stack.sender.sendMessage(mH.miniMessageFormat("\n <gray>+-------------------------------------------------\n" +
                                 " <gray>|\n" +
                                 " <gray>|   <gold>→ <bold>" + pluginMeta.name + "</bold> ←\n" +
                                 " <gray>|   <white>Author: <bold><gold>" + pdf.authors + "</gold></bold>\n" +
                                 " <gray>|   <white>Website: <bold><gold><click:open_url:'" + pdf.website + "'>"  + pdf.website + "</click></gold></bold>\n" +
                                 " <gray>|   <white>Version: <bold><gold>" + pluginMeta.version + "</gold></bold>\n" +
                                 " <gray>|" +
-                                "\n-------------------------------------------------"))
+                                "\n<gray>+-------------------------------------------------"))
                     } else {
                         stack.sender.sendMessage(mH.getMessage("error", "no_permission"))
                     }
@@ -53,21 +53,6 @@ class FormatterXCommands(private val plugin: FormatterX) : BasicCommand {
                         stack.sender.sendMessage(mH.getMessage("error", "no_permission"))
                     }
                 }
-                /*
-                args[0].equals("export", ignoreCase = true) -> {
-                    if (stack.sender.hasPermission("formatterx.cmd.export")) {
-                        //plugin.databaseHandler.exportDatabase()
-                    } else {
-                        stack.sender.sendMessage(mH.getMessage("error", "no_permission"))
-                    }
-                }
-                args[0].equals("import", ignoreCase = true) -> {
-                    if (stack.sender.hasPermission("formatterx.cmd.import")) {
-                        //plugin.databaseHandler.importDatabase()
-                    } else {
-                        stack.sender.sendMessage(mH.getMessage("error", "no_permission"))
-                    }
-                }*/
             }
         } else {
             stack.sender.sendMessage(mH.miniMessageFormat("<green>Type </green><gold>/formatterx help</gold> <green>to see available commands</green>"))

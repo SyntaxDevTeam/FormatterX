@@ -15,26 +15,14 @@ class CommandManager(private val plugin: FormatterX) {
             val commands: Commands = event.registrar()
             commands.register(
                 "formatterx",
-                "formatterx plugin command. Type /formatterx help to check available commands",
+                "Formatterx plugin command. Type /formatterx help to check available commands",
                 FormatterXCommands(plugin)
             )
             commands.register(
                 "ftx",
-                "formatterx plugin command. Type /ftx help to check available commands",
+                "Formatterx plugin command. Type /ftx help to check available commands",
                 FormatterXCommands(plugin)
             )
-
-            val aliases = plugin.config.getConfigurationSection("aliases")
-            aliases?.getKeys(false)?.forEach { key ->
-                val commandName = aliases.getString(key) ?: key
-                when (key) {
-                    "formatterx" -> commands.register(
-                        commandName,
-                        "Checking player penalties" + plugin.messageHandler.getSimpleMessage("check", "usage"),
-                        FormatterXCommands(plugin)
-                    )
-                }
-            }
         }
     }
 }
