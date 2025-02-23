@@ -11,11 +11,7 @@ class FormatterXCommands(private val plugin: FormatterX) : BasicCommand {
     private val mH = plugin.messageHandler
 
     override fun execute(@NotNull stack: CommandSourceStack, @NotNull args: Array<String>) {
-        if (!stack.sender.hasPermission("formatterx.cmd.help") ||
-            !stack.sender.hasPermission("formatterx.cmd.version") ||
-            !stack.sender.hasPermission("formatterx.cmd.reload") ||
-            !stack.sender.hasPermission("formatterx.cmd.export") ||
-            !stack.sender.hasPermission("formatterx.cmd.import")) {
+        if (!stack.sender.hasPermission("formatterx.cmd.ftx")) {
             stack.sender.sendMessage(plugin.messageHandler.getMessage("error", "no_permission"))
             return
         }
@@ -102,16 +98,18 @@ class FormatterXCommands(private val plugin: FormatterX) : BasicCommand {
     }
 
     override fun suggest(@NotNull stack: CommandSourceStack, @NotNull args: Array<String>): List<String> {
-        if (!stack.sender.hasPermission("formatterx.help") ||
-            !stack.sender.hasPermission("formatterx.version") ||
-            !stack.sender.hasPermission("formatterx.reload") ||
-            !stack.sender.hasPermission("formatterx.export") ||
-            !stack.sender.hasPermission("formatterx.import")) {
-            return emptyList()
-        }
-        return when (args.size) {
-            1 -> listOf("help", "version", "reload", "export", "import")
-            else -> emptyList()
+        return if (stack.sender.hasPermission("formatterx.help") ||
+            stack.sender.hasPermission("formatterx.version") ||
+            stack.sender.hasPermission("formatterx.reload") ||
+            stack.sender.hasPermission("formatterx.export") ||
+            stack.sender.hasPermission("formatterx.import")) {
+
+            when (args.size) {
+                1 -> listOf("help", "version", "reload", "export", "import")
+                else -> emptyList()
+            }
+        } else {
+            emptyList()
         }
     }
 }

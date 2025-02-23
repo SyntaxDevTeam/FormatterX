@@ -36,7 +36,7 @@ chat:
 
 # Plugin language selection. Possible values:  EN, PL
 # If you would like to add your own language file, please contact us on Discord (https://discord.gg/Zk6mxv7eMh).
-language: "PL"
+language: "EN"
 
 # Update check and auto-update settings
 checkForUpdates: true
