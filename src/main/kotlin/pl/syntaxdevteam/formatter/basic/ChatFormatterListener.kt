@@ -6,6 +6,7 @@ import me.clip.placeholderapi.PlaceholderAPI
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -82,8 +83,7 @@ class ChatFormatterListener(
         val suffixesSeparator = plugin.config.getString("chat.suffixes_separator") ?: ""
         val prefixes = hookHandler.getAllLuckPermsMetData(player)?.prefixes?.values?.joinToString(prefixesSeparator) ?: ""
         val suffixes = hookHandler.getAllLuckPermsMetData(player)?.suffixes?.values?.joinToString(suffixesSeparator) ?: ""
-
-        val displayName = PlainTextComponentSerializer.plainText().serialize(player.displayName())
+        val displayName = LegacyComponentSerializer.legacyAmpersand().serialize(player.displayName())
         val playerName = player.name
         val worldName = player.world.name
         val filteredMessageContent = filterMessageContent(player, messageContent)
