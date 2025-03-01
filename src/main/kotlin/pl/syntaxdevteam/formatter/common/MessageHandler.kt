@@ -441,7 +441,7 @@ class MessageHandler(private val plugin: FormatterX) {
      * @return The string with Unicode escape sequences converted to characters.
      */
     private fun convertUnicodeEscapeSequences(input: String): String {
-        return input.replace(Regex("""\\u([0-9A-Fa-f]{4})""")) { matchResult ->
+        return input.replace(Regex("""\\u([0-9A-Fa-f]{4,5})""")) { matchResult ->
             val codePoint = matchResult.groupValues[1].toInt(16)
             String(Character.toChars(codePoint))
         }
