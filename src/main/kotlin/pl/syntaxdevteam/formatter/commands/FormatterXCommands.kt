@@ -98,14 +98,10 @@ class FormatterXCommands(private val plugin: FormatterX) : BasicCommand {
     }
 
     override fun suggest(@NotNull stack: CommandSourceStack, @NotNull args: Array<String>): List<String> {
-        return if (stack.sender.hasPermission("formatterx.help") ||
-            stack.sender.hasPermission("formatterx.version") ||
-            stack.sender.hasPermission("formatterx.reload") ||
-            stack.sender.hasPermission("formatterx.export") ||
-            stack.sender.hasPermission("formatterx.import")) {
+        return if (stack.sender.hasPermission("legacyteamx.cmd.ftx")) {
 
             when (args.size) {
-                1 -> listOf("help", "version", "reload", "export", "import")
+                1 -> listOf("help", "version", "reload")
                 else -> emptyList()
             }
         } else {
