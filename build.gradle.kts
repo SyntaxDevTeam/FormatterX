@@ -1,10 +1,10 @@
 plugins {
     kotlin("jvm") version "2.1.10"
-    id("com.gradleup.shadow") version "9.0.0-beta8"
+    id("com.gradleup.shadow") version "9.0.0-beta9"
 }
 
 group = "pl.syntaxdevteam.formatter"
-version = "Pre-Releasce-1"
+version = "Pre-Releasce-2"
 description = "The intelligent chat formatting plugin with LuckPerms, PlaceholderAPI, MiniPlaceholder, Vault and VaultUnlocked support!"
 
 repositories {
@@ -23,13 +23,13 @@ repositories {
 dependencies {
     compileOnly("dev.folia:folia-api:1.21.4-R0.1-SNAPSHOT")
     compileOnly("org.eclipse.aether:aether-api:1.1.0")
-    compileOnly("org.yaml:snakeyaml:2.3")
+    compileOnly("org.yaml:snakeyaml:2.4")
     compileOnly("com.google.code.gson:gson:2.12.1")
-    compileOnly("net.kyori:adventure-text-serializer-legacy:4.18.0")
-    compileOnly("net.kyori:adventure-text-minimessage:4.18.0")
-    compileOnly("net.kyori:adventure-text-serializer-gson:4.18.0")
-    compileOnly("net.kyori:adventure-text-serializer-plain:4.18.0")
-    compileOnly("net.kyori:adventure-text-serializer-ansi:4.18.0")
+    compileOnly("net.kyori:adventure-text-serializer-legacy:4.19.0")
+    compileOnly("net.kyori:adventure-text-minimessage:4.19.0")
+    compileOnly("net.kyori:adventure-text-serializer-gson:4.19.0")
+    compileOnly("net.kyori:adventure-text-serializer-plain:4.19.0")
+    compileOnly("net.kyori:adventure-text-serializer-ansi:4.19.0")
     compileOnly("net.luckperms:api:5.4")
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.2.3")
