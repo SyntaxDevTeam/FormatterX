@@ -1,0 +1,17 @@
+# Ver. 1.0.0
+# Message formatting:
+# You can use MiniMessage and Legacy (Minecraft) formatting.
+# Examples of how to use MiniMessage: https://docs.advntr.dev/minimessage/format.html
+# Do not mix formats in one message. If you use Legacy, do not insert MiniMessage formatting; otherwise, only the latter will be used.
+
+prefix: "<gradient:#ffd745:#ff6a00:#fbff00:#ff6a00:#ffd745>[<b>FormatterX</b>]</gradient>"
+
+# Error handling messages
+error:
+  no_permission: "<red>You do not have permission to use this command.</red>"
+  player_not_found: "<gold>Player with nickname {player} not found.</gold>"
+  console: "<red>Only a player can use this command.</red>"
+  reload: "<red>An error occurred while reloading the configuration:</red> "
+
+formatterx:
+  reload: "<green>Configuration reloaded successfully.</green>"

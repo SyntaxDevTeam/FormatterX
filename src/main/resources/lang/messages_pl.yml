@@ -12,7 +12,6 @@ error:
   player_not_found: "<gold>Nie znaleziono gracza o nicku {player}.</gold>"
   console: "<red>Tylko gracz może użyć tej komendy</red>"
   reload: "<red>Wystąpił błąd podczas przełądowania konfiguracji:</red> "
-  bypass: "<red><b>UWAGA!</b> Gracz <gold>{player}<gold/> <red>nie może otrzymać kary, ze zględu na swoje uprawnienia (OP lub bypass).</red><dark_gray>Może dało by się to obejść..."
 
 formatterx:
   reload: "<green>Pomyślnie przeładowano konfigurację.</green>"
