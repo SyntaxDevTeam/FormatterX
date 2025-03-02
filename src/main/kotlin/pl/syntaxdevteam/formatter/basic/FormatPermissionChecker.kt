@@ -3,106 +3,106 @@ package pl.syntaxdevteam.formatter.basic
 import org.bukkit.entity.Player
 
 /**
- * Klasa [FormatPermissionChecker] jest odpowiedzialna za sprawdzanie uprawnień graczy do używania różnych funkcji formatowania.
- * Zawiera metody sprawdzające uprawnienia do używania kolorów, formatowania, tagów dynamicznych oraz tokenów kolorów.
+ * The [FormatPermissionChecker] class is responsible for verifying players' permissions to use various formatting features.
+ * It contains methods that check permissions for colors, formatting, dynamic tags, and color tokens.
  */
 object FormatPermissionChecker {
 
     /**
-     * Sprawdzenie uprawnień dla Legacy
-     * @param player Gracz, którego uprawnienia zostaną sprawdzone
-     * @return true, jeśli gracz ma uprawnienia do używania Legacy
+     * Checks permissions for Legacy
+     * @param player The player whose permissions will be checked
+     * @return true if the player has permission to use Legacy
      */
     private fun canUseAnyLegacy(player: Player): Boolean {
         return player.hasPermission("formatterx.legacy.all")
     }
 
     /**
-     * Sprawdzenie uprawnień dla MiniMessage
-     * @param player Gracz, którego uprawnienia zostaną sprawdzone
-     * @return true, jeśli gracz ma uprawnienia do używania MiniMessage
+     * Checks permissions for MiniMessage
+     * @param player The player whose permissions will be checked
+     * @return true if the player has permission to use MiniMessage
      */
     private fun canUseAnyMinimessage(player: Player): Boolean {
         return player.hasPermission("formatterx.minimessage.all")
     }
 
     /**
-     * Sprawdzenie uprawnień dla kolorów (Legacy)
-     * @param player Gracz, którego uprawnienia zostaną sprawdzone
-     * @return true, jeśli gracz ma uprawnienia do używania kolorów Legacy
+     * Checks permissions for Legacy colors
+     * @param player The player whose permissions will be checked
+     * @return true if the player has permission to use Legacy colors
      */
     private fun canUseLegacyColors(player: Player): Boolean {
         return player.hasPermission("formatterx.legacy.color") || canUseAnyLegacy(player)
     }
 
     /**
-     * Sprawdzenie uprawnień dla kolorów MiniMessage
-     * @param player Gracz, którego uprawnienia zostaną sprawdzone
-     * @return true, jeśli gracz ma uprawnienia do używania kolorów MiniMessage
+     * Checks permissions for MiniMessage colors
+     * @param player The player whose permissions will be checked
+     * @return true if the player has permission to use MiniMessage colors
      */
     fun canUseMinimessageColors(player: Player): Boolean {
-        return player.hasPermission("formatterx.minimessage.color") || canUseAnyMinimessage(player)
+        return /*player.hasPermission("formatterx.minimessage.color") || */ canUseAnyMinimessage(player)
     }
 
     /**
-     * Sprawdzenie uprawnień dla kolorów RGB
-     * @param player Gracz, którego uprawnienia zostaną sprawdzone
-     * @return true, jeśli gracz ma uprawnienia do używania kolorów RGB
+     * Checks permissions for RGB colors
+     * @param player The player whose permissions will be checked
+     * @return true if the player has permission to use RGB colors
      */
     private fun canUseRgbColors(player: Player): Boolean {
         return player.hasPermission("formatterx.rgb") || canUseAnyMinimessage(player)
     }
 
     /**
-     * Sprawdzenie uprawnień dla formatowania (Legacy)
-     * @param player Gracz, którego uprawnienia zostaną sprawdzone
-     * @return true, jeśli gracz ma uprawnienia do używania formatowania
+     * Checks permissions for Legacy formatting
+     * @param player The player whose permissions will be checked
+     * @return true if the player has permission to use Legacy formatting
      */
     private fun canUseLegacyFormatting(player: Player): Boolean {
         return player.hasPermission("formatterx.legacy.formatting") || canUseAnyLegacy(player)
     }
 
     /**
-     * Sprawdzenie uprawnień dla formatowania (MiniMessage)
-     * @param player Gracz, którego uprawnienia zostaną sprawdzone
-     * @return true, jeśli gracz ma uprawnienia do używania formatowania
+     * Checks permissions for MiniMessage formatting
+     * @param player The player whose permissions will be checked
+     * @return true if the player has permission to use MiniMessage formatting
      */
     private fun canUseMinimessageFormatting(player: Player): Boolean {
         return player.hasPermission("formatterx.minimessage.formatting") || canUseAnyMinimessage(player)
     }
 
     /**
-     * Sprawdzenie uprawnień do użycia wszystkich typów placeholderów
-     * @param player Gracz, którego uprawnienia zostaną sprawdzone
-     * @return true, jeśli gracz ma uprawnienia do używania placeholderów
+     * Checks permissions to use all types of placeholders
+     * @param player The player whose permissions will be checked
+     * @return true if the player has permission to use placeholders
      */
     private fun canUsePlaceholders(player: Player): Boolean {
         return player.hasPermission("formatterx.placeholder.all")
     }
 
     /**
-     * Sprawdzenie uprawnień do użycia PlaceholderAPI
-     * @param player Gracz, którego uprawnienia zostaną sprawdzone
-     * @return true, jeśli gracz ma uprawnienia do używania PlaceholderAPI
+     * Checks permissions to use PlaceholderAPI
+     * @param player The player whose permissions will be checked
+     * @return true if the player has permission to use PlaceholderAPI
      */
     fun canUsePapi(player: Player): Boolean {
         return player.hasPermission("formatterx.placeholder.papi") || canUsePlaceholders(player)
     }
 
     /**
-     * Sprawdzenie uprawnień do użycia MiniPlaceholder
-     * @param player Gracz, którego uprawnienia zostaną sprawdzone
-     * @return true, jeśli gracz ma uprawnienia do używania MiniPlaceholder
+     * Checks permissions to use MiniPlaceholder
+     * @param player The player whose permissions will be checked
+     * @return true if the player has permission to use MiniPlaceholder
      */
     fun canUseMiniPlaceholder(player: Player): Boolean {
         return player.hasPermission("formatterx.placeholder.minipapi") || canUsePlaceholders(player)
     }
 
     /**
-     * Sprawdzenie uprawnień dla kolorów (Legacy)
-     * @param player Gracz, którego uprawnienia zostaną sprawdzone
-     * @param colorToken Token koloru
-     * @return true, jeśli gracz ma uprawnienia do używania danego koloru
+     * Checks permissions for Legacy colors
+     * @param player The player whose permissions will be checked
+     * @param colorToken The color token
+     * @return true if the player has permission to use the specified color
      */
     private fun canUseLegacyColor(player: Player, colorToken: String): Boolean {
         val legacyPermissions = mapOf(
@@ -128,10 +128,10 @@ object FormatPermissionChecker {
     }
 
     /**
-     * Sprawdzenie uprawnień dla formatowania (Legacy)
-     * @param player Gracz, którego uprawnienia zostaną sprawdzone
-     * @param formatToken Token formatowania
-     * @return true, jeśli gracz ma uprawnienia do używania danego formatowania
+     * Check permissions for formatting (Legacy)
+     * @param player The player whose permissions will be checked
+     * @param formatToken The formatting token
+     * @return true if the player has permissions to use the formatting
      */
     fun canUseLegacyFormat(player: Player, formatToken: String): Boolean {
         val formatPermissions = mapOf(
@@ -147,28 +147,48 @@ object FormatPermissionChecker {
     }
 
     /**
-     * Sprawdzenie uprawnień dla formatowania (MiniMessage)
-     * @param player Gracz, którego uprawnienia zostaną sprawdzone
-     * @param formatToken Token formatowania
-     * @return true, jeśli gracz ma uprawnienia do używania danego formatowania
+     * Check permissions for formatting (MiniMessage)
+     * @param player The player whose permissions will be checked
+     * @param formatToken The formatting token
+     * @return true if the player has permissions to use the given formatting
      */
     fun canUseMinimessageFormat(player: Player, formatToken: String): Boolean {
+
+        val tagKey = if (formatToken.startsWith("<") && formatToken.endsWith(">")) {
+            formatToken.substring(1, formatToken.length - 1)
+                .substringBefore(':')
+                .lowercase()
+        } else {
+            formatToken.lowercase()
+        }
+
         val minimessagePermissions = mapOf(
-            "<bold>" to "formatterx.minimessage.bold",
-            "<b>" to "formatterx.minimessage.bold",
-            "<italic>" to "formatterx.minimessage.italic",
-            "<em>" to "formatterx.minimessage.italic",
-            "<i>" to "formatterx.minimessage.italic",
-            "<underlined>" to "formatterx.minimessage.underline",
-            "<strikethrough>" to "formatterx.minimessage.strikethrough",
-            "<st>" to "formatterx.minimessage.strikethrough",
-            "<obfuscated>" to "formatterx.minimessage.magic",
-            "<obf>" to "formatterx.minimessage.magic",
-            "<reset>" to "formatterx.minimessage.reset"
+            "bold" to "formatterx.minimessage.bold",
+            "b" to "formatterx.minimessage.bold",
+            "italic" to "formatterx.minimessage.italic",
+            "em" to "formatterx.minimessage.italic",
+            "i" to "formatterx.minimessage.italic",
+            "underlined" to "formatterx.minimessage.underline",
+            "strikethrough" to "formatterx.minimessage.strikethrough",
+            "st" to "formatterx.minimessage.strikethrough",
+            "obfuscated" to "formatterx.minimessage.magic",
+            "obf" to "formatterx.minimessage.magic",
+            "reset" to "formatterx.minimessage.reset",
+            "rainbow" to "formatterx.minimessage.rainbow",
+            "gradient" to "formatterx.minimessage.gradient",
+            "click" to "formatterx.minimessage.click",
+            "hover" to "formatterx.minimessage.hover",
+            "font" to "formatterx.minimessage.font",
+            "insertion" to "formatterx.minimessage.insertion",
+            "keybind" to "formatterx.minimessage.keybind",
+            "transition" to "formatterx.minimessage.transition",
+            "translatable" to "formatterx.minimessage.translatable",
+            "selector" to "formatterx.minimessage.selector"
         )
 
-        return minimessagePermissions[formatToken]?.let { player.hasPermission(it) } == true || canUseMinimessageFormatting(player)
+        return minimessagePermissions[tagKey]?.let { player.hasPermission(it) } == true || canUseMinimessageFormatting(player)
     }
+
 
     /**
      * Sprawdzenie uprawnień dla dynamicznych tagów (MiniMessage)
