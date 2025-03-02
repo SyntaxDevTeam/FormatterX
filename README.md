@@ -2,11 +2,13 @@
 
 ## Description
 The plugin enables advanced text formatting in Minecraft, supporting various formatting styles such as:
-- **Minecraft Legacy** (`&7` and other codes)
-- **RGB** (`&#FF00FF` for custom colors)
+- **Ampersand Format** (`&a`, `&l` and other codes)
+- **Minecraft Legacy** (`§c`, `§l` and other codes)
+- **MinecraftRGB** (`&#FF00FF` for custom colors)
+- **LuckPerms RGB** (`§x§F§F§0§0§F§F`)
 - **MiniMessage** (full support for formatting methods - check https://docs.advntr.dev/minimessage/format.html)
 
-It can operate independently while also integrating with popular plugins, maintaining full flexibility and compatibility.
+**The plugin doesn't require any additional plugins to format your chat. However, the full potential of FormatterX is revealed when integrated with other plugins.**
 
 ## Integrations
 The plugin works with the following plugins, though none are required for its functionality:
@@ -29,8 +31,9 @@ All plugin settings can be customized in the configuration file, providing full 
 ## Installation
 1. Download the plugin and place it in the `plugins` folder on your Minecraft server.
 2. Restart the server to generate the configuration files.
-3. Adjust the settings as needed.
-4. Enjoy advanced text formatting on your server!
+3. (Read the Wiki to learn as much as possible about the plugin's setting options.)[https://github.com/SyntaxDevTeam/FormatterX/wiki]
+4. Adjust the settings as needed.
+5. Enjoy advanced text formatting on your server!
 
 ## Summary
 The plugin provides versatile tools for text formatting, allowing complete customization of message appearance on a Minecraft server. With support for multiple formats and integrations with popular plugins, it is an essential solution for any server administrator!
