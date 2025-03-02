@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "pl.syntaxdevteam.formatter"
-version = "Pre-Releasce-2"
+version = "1.0.0"
 description = "The intelligent chat formatting plugin with LuckPerms, PlaceholderAPI, MiniPlaceholder, Vault and VaultUnlocked support!"
 
 repositories {
