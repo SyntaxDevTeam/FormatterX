@@ -31,7 +31,7 @@ All plugin settings can be customized in the configuration file, providing full 
 ## Installation
 1. Download the plugin and place it in the `plugins` folder on your Minecraft server.
 2. Restart the server to generate the configuration files.
-3. (Read the Wiki to learn as much as possible about the plugin's setting options.)[https://github.com/SyntaxDevTeam/FormatterX/wiki]
+3. [Read the Wiki to learn as much as possible about the plugin's setting options.](https://github.com/SyntaxDevTeam/FormatterX/wiki)
 4. Adjust the settings as needed.
 5. Enjoy advanced text formatting on your server!
 
