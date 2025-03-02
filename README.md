@@ -35,5 +35,10 @@ All plugin settings can be customized in the configuration file, providing full 
 4. 🛠️ Adjust the settings as needed.
 5. 🎉 Enjoy advanced text formatting on your server!
 
+## 🤔 Why Choose FormatterX?
+What sets FormatterX apart from numerous other plugins of this type? Primarily, the lack of restrictions in using different formats allows you to freely mix styles without worrying that they won't be properly formatted in the chat! Most plugins have an issue where, when you try to use `&7` codes and MiniMessage format `<bold><red>` simultaneously, the latter always dominates, and the rest aren't translated into appropriate colors or formats. For example: `<&fHello &leveryone! <green>We have a wonderful %dayplugin_day% day &rfor mining &#FFCF00Diamonds!`. Our plugin, FormatterX, handles even such a mix of formats!
+
+Moreover, other plugins partially use built-in methods from server engines to handle certain content, complicating matters with custom builds or different forks of a given engine. We have completely solved this problem by becoming independent of such methods while maintaining the same, and often better, performance!
+
 ## 📝 Summary
-The plugin provides versatile tools for text formatting, allowing complete customization of message appearance on a Minecraft server. With support for multiple formats and integrations with popular plugins, it is an essential solution for any server administrator!
+FormatterX provides versatile tools for text formatting, allowing complete customization of message appearance on a Minecraft server. With support for multiple formats and integrations with popular plugins, it is an essential solution for any server administrator!
