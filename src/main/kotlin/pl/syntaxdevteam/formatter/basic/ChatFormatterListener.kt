@@ -174,47 +174,33 @@ class ChatFormatterListener(
             val char = message[i]
             if (char == '&' && i + 7 < message.length && message[i + 1] == '#' && message.substring(i + 2, i + 8).matches(Regex("[0-9A-Fa-f]{6}"))) {
                 val token = message.substring(i, i + 8)
-                plugin.logger.debug("Sprawdzanie czy token zawiera RGB (&# : $token")
                 if (fpc.canUseColorToken(player, token)) {
-                    plugin.logger.debug("Sprawdzanie uprawnień dla tokena canUseColorToken: ${fpc.canUseColorToken(player, token)}")
                     filteredMessage.append(token)
                 }
                 i += 8
 
             } else if (char == '§' && i + 1 < message.length) {
                 val token = message.substring(i, i + 2)
-                plugin.logger.debug("Sprawdzanie czy token zawiera § : $token")
                 if (fpc.canUseColorToken(player, token) || fpc.canUseLegacyFormat(player, token)) {
-                    plugin.logger.debug("Sprawdzanie uprawnień dla tokena canUseColorToken: ${fpc.canUseColorToken(player, token)} i canUseLegacyFormat: ${fpc.canUseLegacyFormat(player, token)}")
                     filteredMessage.append(token)
                 }
                 i += 2
             } else if (char == '<') {
                 val endIndex = message.indexOf('>', i)
-                plugin.logger.debug("Sprawdzanie czy token to MiniMessage: $char ... $endIndex")
                 if (endIndex != -1) {
                     val token = message.substring(i, endIndex + 1)
-                    plugin.logger.debug("Sprawdzanie czy token to MiniMessage z <>: $token")
                     val tagContent = token.substring(1, token.length - 1)
-                    plugin.logger.debug("Sprawdzanie czy token to MiniMessage bez <>: $tagContent")
                     val tagName = tagContent.substringBefore(':').lowercase()
-                    plugin.logger.debug("Wyciągam nazwę tagu (do pierwszego dwukropka, jeśli istnieje): $tagName")
 
                     if (allowedMiniMessageColors.contains(tagName)) {
-                        plugin.logger.debug("Czy zawiera dozwolone kolory? Tak")
                         if (fpc.canUseMinimessageColors(player)) {
-                            plugin.logger.debug("Sprawdzanie uprawnień dla tokena canUseMinimessageColors: ${fpc.canUseMinimessageColors(player)}")
                             filteredMessage.append(token)
                         }
                     } else if (allowedMiniMessageFormats.contains(tagName)) {
-                        plugin.logger.debug("Czy zawiera dozwolone formaty? Tak")
                         if (fpc.canUseMinimessageFormat(player, token)) {
-                            plugin.logger.debug("Sprawdzanie uprawnień dla tokena canUseMinimessageFormat: ${fpc.canUseMinimessageFormat(player, token)}")
                             filteredMessage.append(token)
                         }
                     } else {
-                        plugin.logger.debug("Czy zawiera dozwolone color? Nie")
-                        plugin.logger.debug("Czy zawiera dozwolone formaty? Nie")
                         if (fpc.canUseMiniPlaceholder(player)) {
                             filteredMessage.append(token)
                         } else {
@@ -235,9 +221,7 @@ class ChatFormatterListener(
                 i = endIndex + 1
             } else if (char == '&' && i + 1 < message.length) {
                 val token = message.substring(i, i + 2)
-                plugin.logger.debug("Sprawdzanie czy token zawiera & : $token")
                 if (fpc.canUseColorToken(player, token) || fpc.canUseLegacyFormat(player, token)) {
-                    plugin.logger.debug("Sprawdzanie uprawnień dla tokena canUseColorToken: ${fpc.canUseColorToken(player, token)} i canUseLegacyFormat: ${fpc.canUseLegacyFormat(player, token)}")
                     filteredMessage.append(token)
                 }
                 i += 2

@@ -191,10 +191,10 @@ object FormatPermissionChecker {
 
 
     /**
-     * Sprawdzenie uprawnień dla dynamicznych tagów (MiniMessage)
-     * @param player Gracz, którego uprawnienia zostaną sprawdzone
-     * @param tagName Nazwa tagu
-     * @return true, jeśli gracz ma uprawnienia do używania danego tagu
+     * Check permissions for dynamic tags (MiniMessage)
+     * @param player The player whose permissions will be checked
+     * @param tagName The tag name
+     * @return true if the player has permissions to use the given tag
      */
     private fun canUseDynamicTag(player: Player, tagName: String): Boolean {
         val dynamicTagPermissions = mapOf(
@@ -214,10 +214,10 @@ object FormatPermissionChecker {
     }
 
     /**
-     * Sprawdzenie uprawnień dla tokena koloru
-     * @param player Gracz, którego uprawnienia zostaną sprawdzone
-     * @param token Token koloru
-     * @return true, jeśli gracz ma uprawnienia do używania danego koloru
+     * Check permissions for color tokens
+     * @param player The player whose permissions will be checked
+     * @param token The color token
+     * @return true if the player has permissions to use the given color
      */
     fun canUseColorToken(player: Player, token: String): Boolean {
         return when {
