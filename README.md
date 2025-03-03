@@ -28,6 +28,10 @@ The plugin works with the following plugins, though none are required for its fu
 ## ⚙️ Configuration
 All plugin settings can be customized in the configuration file, providing full control over its functionality.
 
+## 📥 Download
+* Always up-to-date stable version available for download on Hangar [![Available on Hangar](https://img.shields.io/hangar/dt/FormatterX)](https://hangar.papermc.io/SyntaxDevTeam/FormatterX)
+* You can also build the development version yourself from [![Available on GitHub](https://img.shields.io/badge/GitHub.com-FormatterX-yellow)](https://github.com/SyntaxDevTeam/FormatterX)
+
 ## 🛠️ Installation
 1. 📥 Download the plugin and place it in the `plugins` folder on your Minecraft server.
 2. 🔄 Restart the server to generate the configuration files.
