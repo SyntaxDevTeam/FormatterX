@@ -116,50 +116,10 @@ class ChatFormatterListener(
         return format
     }
 
-    /**
-     * Filters the provided chat message content based on the player's permissions for various formatting tokens.
-     *
-     * This method processes the message by iterating over each character and handling different types of formatting tokens:
-     *
-     * 1. **Legacy Tokens with Ampersand (&) Prefix:**
-     *    - When a token starts with '&' and has at least one following character, a two-character token is extracted.
-     *    - The token is checked using:
-     *      - [FormatPermissionChecker.canUseColorToken] to determine if the player is allowed to use the color.
-     *      - [FormatPermissionChecker.canUseLegacyFormat] to determine if the player is allowed to use the format.
-     *    - If either check passes, the token is appended to the filtered message.
-     *
-     * 2. **Legacy Tokens with Section Sign (§) Prefix:**
-     *    - Similar to the ampersand tokens, if a token starts with '§', a two-character token is extracted and validated.
-     *    - The same permission checks as for ampersand tokens are applied.
-     *
-     * 3. **MiniMessage Tokens Enclosed in Angle Brackets (< and >):**
-     *    - When a token starts with '<', the method looks ahead to find the corresponding closing '>'.
-     *    - The token between these delimiters is extracted, and the tag name is derived by taking the substring
-     *      before the colon (if any) and converting it to lowercase.
-     *    - The tag is then categorized as either a color or a formatting tag:
-     *      - **Allowed MiniMessage Colors:** If the tag name is in the `allowedMiniMessageColors` set,
-     *        [FormatPermissionChecker.canUseMinimessageColors] is called to verify if the player has permission.
-     *      - **Allowed MiniMessage Formats:** If the tag name is in the `allowedMiniMessageFormats` set,
-     *        [FormatPermissionChecker.canUseMinimessageFormat] is called with the entire token.
-     *      - **Fallback Case:** If the tag does not match either allowed set, the method checks if the player can use
-     *        MiniPlaceholder tokens via [FormatPermissionChecker.canUseMiniPlaceholder] and, if so, appends the token.
-     *
-     * 4. **Placeholder Tokens Enclosed in Percent Signs (%):**
-     *    - When encountering a '%' character, the method searches for the next '%' to extract a placeholder token.
-     *    - The token is appended only if [FormatPermissionChecker.canUsePapi] confirms that the player has permission.
-     *
-     * 5. **Other Characters:**
-     *    - Characters that do not belong to any recognized formatting token are directly appended to the filtered message.
-     *
-     * @param player The player whose permissions determine which formatting tokens are allowed.
-     * @param message The original chat message content that may contain various formatting tokens.
-     * @return A filtered string containing only those formatting tokens and characters that the player is permitted to use.
-     */
     private fun filterMessageContent(player: Player, message: String): String {
         val allowedMiniMessageColors = setOf(
-            "black", "dark_blue", "dark_green", "dark_aqua", "dark_red",
-            "red", "purple", "gold", "gray", "dark_gray", "blue",
-            "green", "aqua", "pink", "yellow", "white"
+            "black", "dark_blue", "dark_green", "dark_aqua", "dark_red", "red",
+            "purple", "gold", "gray", "dark_gray", "blue", "green", "aqua", "pink", "yellow", "white"
         )
         val allowedMiniMessageFormats = setOf(
             "bold", "italic", "underlined", "strikethrough", "magic", "reset",
@@ -167,68 +127,90 @@ class ChatFormatterListener(
             "keybind", "translatable", "selector"
         )
 
+        val legacyColors = setOf(
+            "&0", "&1", "&2", "&3", "&4", "&5", "&6", "&7", "&8", "&9", "&a", "&b", "&c", "&d", "&e", "&f"
+        )
+
+        val legacyFormats = setOf(
+            "&k", "&l", "&m", "&n", "&o", "&r"
+        )
+
         val filteredMessage = StringBuilder()
         var i = 0
 
         while (i < message.length) {
             val char = message[i]
+
             if (char == '&' && i + 7 < message.length && message[i + 1] == '#' && message.substring(i + 2, i + 8).matches(Regex("[0-9A-Fa-f]{6}"))) {
                 val token = message.substring(i, i + 8)
                 if (fpc.canUseColorToken(player, token)) {
                     filteredMessage.append(token)
                 }
                 i += 8
+                continue
+            }
 
-            } else if (char == '§' && i + 1 < message.length) {
+            if (char == '§' && i + 1 < message.length) {
                 val token = message.substring(i, i + 2)
-                if (fpc.canUseColorToken(player, token) || fpc.canUseLegacyFormat(player, token)) {
-                    filteredMessage.append(token)
+                if (legacyColors.contains(token) || legacyFormats.contains(token)) {
+                    if (fpc.canUseColorToken(player, token) || fpc.canUseLegacyFormat(player, token)) {
+                        filteredMessage.append(token)
+                    }
+                    i += 2
+                    continue
                 }
-                i += 2
-            } else if (char == '<') {
+            }
+            if (char == '&' && i + 1 < message.length) {
+                val token = message.substring(i, i + 2)
+                if (legacyColors.contains(token) || legacyFormats.contains(token)) {
+                    if (fpc.canUseColorToken(player, token) || fpc.canUseLegacyFormat(player, token)) {
+                        filteredMessage.append(token)
+                    }
+                    i += 2
+                    continue
+                }
+            }
+
+            if (char == '&' && (i + 1 >= message.length || !message[i + 1].lowercaseChar().isLetterOrDigit())) {
+                filteredMessage.append("&")
+                i++
+                continue
+            }
+
+            if (char == '<') {
                 val endIndex = message.indexOf('>', i)
                 if (endIndex != -1) {
                     val token = message.substring(i, endIndex + 1)
                     val tagContent = token.substring(1, token.length - 1)
                     val tagName = tagContent.substringBefore(':').lowercase()
 
-                    if (allowedMiniMessageColors.contains(tagName)) {
-                        if (fpc.canUseMinimessageColors(player)) {
+                    when {
+                        allowedMiniMessageColors.contains(tagName) && fpc.canUseMinimessageColors(player) ->
                             filteredMessage.append(token)
-                        }
-                    } else if (allowedMiniMessageFormats.contains(tagName)) {
-                        if (fpc.canUseMinimessageFormat(player, token)) {
+
+                        allowedMiniMessageFormats.contains(tagName) && fpc.canUseMinimessageFormat(player, token) ->
                             filteredMessage.append(token)
-                        }
-                    } else {
-                        if (fpc.canUseMiniPlaceholder(player)) {
+
+                        fpc.canUseMiniPlaceholder(player) ->
                             filteredMessage.append(token)
-                        } else {
-                            filteredMessage.append("")
-                        }
                     }
                     i = endIndex + 1
-                } else {
-                    filteredMessage.append(char)
-                    i++
+                    continue
                 }
-            } else if (char == '%' && message.indexOf('%', i + 1) != -1) {
+            }
+
+            if (char == '%' && message.indexOf('%', i + 1) != -1) {
                 val endIndex = message.indexOf('%', i + 1)
                 val token = message.substring(i, endIndex + 1)
                 if (fpc.canUsePapi(player)) {
                     filteredMessage.append(token)
                 }
                 i = endIndex + 1
-            } else if (char == '&' && i + 1 < message.length) {
-                val token = message.substring(i, i + 2)
-                if (fpc.canUseColorToken(player, token) || fpc.canUseLegacyFormat(player, token)) {
-                    filteredMessage.append(token)
-                }
-                i += 2
-            } else {
-                filteredMessage.append(char)
-                i++
+                continue
             }
+
+            filteredMessage.append(char)
+            i++
         }
 
         return filteredMessage.toString()
