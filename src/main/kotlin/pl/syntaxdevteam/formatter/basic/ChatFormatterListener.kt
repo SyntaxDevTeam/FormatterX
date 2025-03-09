@@ -7,11 +7,10 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import net.kyori.adventure.key.Key
-import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.title.Title
 import java.time.Duration
 import org.bukkit.Bukkit
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -80,16 +79,19 @@ class ChatFormatterListener(
         val mentionedPlayers = onlinePlayers.filter { mentioned ->
             lowerCaseMessage.contains("@${mentioned.name.lowercase()}") && fpc.canReceiveMention(mentioned)
         }
-
-        val soundName = plugin.config.getString("chat.mention-sound", "ENTITY_EXPERIENCE_ORB_PICKUP")
-        val soundKey = soundName?.let { Key.key(it) }
-        val sound = soundKey?.let { Sound.sound(it, Sound.Source.PLAYER, 1.0f, 1.0f) }
+        val soundName = plugin.config.getString("chat.mention-sound", "ENTITY_EXPERIENCE_ORB_PICKUP")?.uppercase()
+        val sound = try {
+            Sound.valueOf(soundName ?: "ENTITY_EXPERIENCE_ORB_PICKUP")
+        } catch (e: IllegalArgumentException) {
+            plugin.logger.warning("Niepoprawna wartość dźwięku w konfiguracji: $soundName. Użycie domyślnego.")
+            null
+        }
 
 
         for (mentioned in mentionedPlayers) {
 
-            if (sound != null) {
-                mentioned.playSound(sound)
+            sound?.let {
+                mentioned.playSound(mentioned.location, it, 1.0f, 1.0f)
             }
             val titleComponent = messageHandler.getLogMessage("chat", "mention_title")
             val subtitleComponent = messageHandler.getLogMessage("chat", "mention", mapOf("player" to player.name))
