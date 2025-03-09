@@ -8,6 +8,14 @@ import org.bukkit.entity.Player
  */
 object FormatPermissionChecker {
 
+    fun canUseMention(player: Player): Boolean {
+        return player.hasPermission("formatterx.mention.use")
+    }
+
+    fun canReceiveMention(player: Player): Boolean {
+        return player.hasPermission("formatterx.mention.receive")
+    }
+
     /**
      * Checks permissions for Legacy
      * @param player The player whose permissions will be checked
