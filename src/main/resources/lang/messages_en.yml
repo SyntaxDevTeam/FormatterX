@@ -15,3 +15,7 @@ error:
 
 formatterx:
   reload: "<green>Configuration reloaded successfully.</green>"
+
+chat:
+  mention_title: "<yellow>Chat Mention!</yellow>"
+  mention: "<gold>{player} mentioned you in chat.</gold>"
