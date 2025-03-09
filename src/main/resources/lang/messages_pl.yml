@@ -18,4 +18,4 @@ formatterx:
 
 chat:
   mention_title: "<yellow>Wzmianka na czacie!</yellow>"
-  mention: "<gold>>{player} oznaczył cię na czacie.</gold>"
+  mention: "<gold>{player} oznaczył cię na czacie.</gold>"
