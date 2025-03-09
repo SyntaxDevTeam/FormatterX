@@ -7,11 +7,17 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import net.kyori.adventure.key.Key
+import net.kyori.adventure.sound.Sound
+import net.kyori.adventure.title.Title
+import java.time.Duration
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
+
+
 import pl.syntaxdevteam.formatter.FormatterX
 import pl.syntaxdevteam.formatter.common.MessageHandler
 import pl.syntaxdevteam.formatter.hooks.HookHandler
@@ -45,12 +51,6 @@ class ChatFormatterListener(
         event.isCancelled = true
 
         val player: Player = event.player
-        if(player.hasPermission("formatterx.minimessage.all")) {
-            plugin.logger.debug("Gracz ma uprawnienia do MiniMessage (formatterx.minimessage.all)")
-        }else{
-            plugin.logger.debug("Gracz nie ma uprawnień do MiniMessage (formatterx.minimessage.all)")
-        }
-
         val messageContent = PlainTextComponentSerializer.plainText().serialize(event.message())
         val group = hookHandler.getPrimaryGroup(player)
         val format = generateChatFormat(player, group, messageContent)
@@ -69,6 +69,40 @@ class ChatFormatterListener(
 
         val finalComponent: Component = messageHandler.formatMixedTextToMiniMessage(format, resolver)
         Bukkit.getServer().sendMessage(finalComponent)
+
+        if (!fpc.canUseMention(player)) {
+            return
+        }
+
+        val lowerCaseMessage = messageContent.lowercase()
+        val onlinePlayers = Bukkit.getOnlinePlayers()
+
+        val mentionedPlayers = onlinePlayers.filter { mentioned ->
+            lowerCaseMessage.contains("@${mentioned.name.lowercase()}") && fpc.canReceiveMention(mentioned)
+        }
+
+        val soundName = plugin.config.getString("chat.mention-sound", "ENTITY_EXPERIENCE_ORB_PICKUP")
+        val soundKey = soundName?.let { Key.key(it) }
+        val sound = soundKey?.let { Sound.sound(it, Sound.Source.PLAYER, 1.0f, 1.0f) }
+
+
+        for (mentioned in mentionedPlayers) {
+
+            if (sound != null) {
+                mentioned.playSound(sound)
+            }
+            val titleComponent = messageHandler.getLogMessage("chat", "mention_title")
+            val subtitleComponent = messageHandler.getLogMessage("chat", "mention", mapOf("player" to player.name))
+            val times = Title.Times.times(
+                Duration.ofMillis(500), // fadeIn
+                Duration.ofSeconds(3),  // stay
+                Duration.ofMillis(500)  // fadeOut
+            )
+            val title = Title.title(titleComponent, subtitleComponent, times)
+
+            mentioned.showTitle(title)
+
+        }
     }
 
     /**
