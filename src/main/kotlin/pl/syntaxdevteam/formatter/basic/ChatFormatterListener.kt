@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @property messageHandler The message handler instance, used for formatting messages and handling placeholders.
  * @property hookHandler The hook handler instance, used for retrieving player-specific data from external services.
  */
+@Suppress("DEPRECATION")
 class ChatFormatterListener(
     private val plugin: FormatterX,
     private val messageHandler: MessageHandler,
@@ -83,7 +84,7 @@ class ChatFormatterListener(
         val sound = try {
             Sound.valueOf(soundName ?: "ENTITY_EXPERIENCE_ORB_PICKUP")
         } catch (e: IllegalArgumentException) {
-            plugin.logger.warning("Niepoprawna wartość dźwięku w konfiguracji: $soundName. Użycie domyślnego.")
+            plugin.logger.debug("Invalid sound value in config: $soundName. Using default.")
             null
         }
 
