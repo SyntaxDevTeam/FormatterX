@@ -3,6 +3,7 @@ package pl.syntaxdevteam.formatter
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import pl.syntaxdevteam.formatter.basic.ChatFormatterListener
+import pl.syntaxdevteam.formatter.basic.CommandsFormatterListener
 import pl.syntaxdevteam.formatter.commands.CommandManager
 import pl.syntaxdevteam.formatter.common.*
 import pl.syntaxdevteam.formatter.hooks.HookHandler
@@ -25,6 +26,7 @@ class FormatterX : JavaPlugin() {
         hookHandler = HookHandler(this)
         messageHandler = MessageHandler(this).apply { initial() }
         server.pluginManager.registerEvents(ChatFormatterListener(this, messageHandler, hookHandler), this)
+        server.pluginManager.registerEvents(CommandsFormatterListener(this, messageHandler, hookHandler), this)
         registerCommands()
         pluginsManager = PluginManager(this)
         statsCollector = StatsCollector(this)

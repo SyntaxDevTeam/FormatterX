@@ -23,6 +23,9 @@
 # Chat format settings
 chat:
   defaultFormat: "{prefix}{username-color}{name}&r: {message-color}{message}"
+  private-message:
+    send: "&7[&aMe -> {receiver}&7] &r{message}"
+    received: "&7[{sender} -> Me&7] &r{message}"
   group-formats: # Set the format per group.
   # Note: Option for more advanced users. Remove comments to run.
   #  default: "[default] {name}&r: {message}"

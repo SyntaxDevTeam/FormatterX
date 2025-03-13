@@ -26,7 +26,7 @@ class HookHandler(private val plugin: FormatterX) {
     /**
      * Initializes the HookHandler by checking if the required services are available on the server.
      * If the services are found, they are hooked into, and success messages are logged.
-     * If the services are not found, warning messages are logged.
+     * If the services are not found, debug messages are logged.
      */
     init {
         checkPlaceholderAPI()
@@ -40,7 +40,7 @@ class HookHandler(private val plugin: FormatterX) {
     /**
      * Checks if the LuckPerms service is available on the server.
      * If the service is found, it is hooked into, and a success message is logged.
-     * If the service is not found, a warning message is logged.
+     * If the service is not found, a debug message is logged.
      */
     private fun checkLuckPerms() {
         if (Bukkit.getPluginManager().isPluginEnabled("LuckPerms")) {
@@ -50,14 +50,14 @@ class HookHandler(private val plugin: FormatterX) {
                 plugin.logger.debug("Hooked into LuckPerms!")
             }
         } else {
-            plugin.logger.warning("LuckPerms plugin not found on server!")
+            plugin.logger.debug("LuckPerms plugin not found on server!")
         }
     }
 
     /**
      * Checks if the Vault service is available on the server.
      * If the service is found, it is hooked into, and a success message is logged.
-     * If the service is not found, a warning message is logged.
+     * If the service is not found, a debug message is logged.
      */
     private fun checkVault() {
         if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
@@ -70,14 +70,14 @@ class HookHandler(private val plugin: FormatterX) {
                 plugin.logger.debug("Hooked into Vault!")
             }
         } else {
-            plugin.logger.warning("Vault plugin not found on server!")
+            plugin.logger.debug("Vault plugin not found on server!")
         }
     }
 
     /**
      * Checks if the VaultUnlocked service is available on the server.
      * If the service is found, it is hooked into, and a success message is logged.
-     * If the service is not found, a warning message is logged.
+     * If the service is not found, a debug message is logged.
      */
     private fun checkVaultUnlocked() {
         if (Bukkit.getPluginManager().isPluginEnabled("VaultUnlocked")) {
@@ -90,21 +90,21 @@ class HookHandler(private val plugin: FormatterX) {
                 plugin.logger.debug("Hooked into VaultUnlocked!")
             }
         } else {
-            plugin.logger.warning("VaultUnlocked plugin not found on server!")
+            plugin.logger.debug("VaultUnlocked plugin not found on server!")
         }
     }
 
     /**
      * Checks if the PlaceholderAPI service is available on the server.
      * If the service is found, it is hooked into, and a success message is logged.
-     * If the service is not found, a warning message is logged.
+     * If the service is not found, a debug message is logged.
      */
     fun checkPlaceholderAPI(): Boolean {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             plugin.logger.debug("Hooked into PlaceholderAPI!")
             return true
         } else {
-            plugin.logger.warning("PlaceholderAPI plugin not found on server!")
+            plugin.logger.debug("PlaceholderAPI plugin not found on server!")
             return false
         }
     }
@@ -112,14 +112,14 @@ class HookHandler(private val plugin: FormatterX) {
     /**
      * Checks if the MiniPlaceholders service is available on the server.
      * If the service is found, it is hooked into, and a success message is logged.
-     * If the service is not found, a warning message is logged.
+     * If the service is not found, a debug message is logged.
      */
     fun checkMiniPlaceholderAPI(): Boolean {
         if (Bukkit.getPluginManager().isPluginEnabled("MiniPlaceholders")) {
             plugin.logger.debug("Hooked into MiniPlaceholders!")
             return true
         } else {
-            plugin.logger.warning("MiniPlaceholders plugin not found on server!")
+            plugin.logger.debug("MiniPlaceholders plugin not found on server!")
             return false
         }
 
