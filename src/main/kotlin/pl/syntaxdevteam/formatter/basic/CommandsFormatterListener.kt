@@ -23,7 +23,7 @@ class CommandsFormatterListener(
 
     private val resolverCache = ConcurrentHashMap<Player, TagResolver>()
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onPrivateMessage(event: PlayerCommandPreprocessEvent) {
         val player = event.player
         val messageParts = event.message.split(" ", limit = 3)
