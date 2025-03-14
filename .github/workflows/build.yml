@@ -37,5 +37,5 @@ jobs:
       - name: Upload JAR
         uses: actions/upload-artifact@v4
         with:
-          name: plugin.jar
+          name: FormatterX-latest-DEV.jar
           path: build/libs/*.jar
