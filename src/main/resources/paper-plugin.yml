@@ -38,6 +38,9 @@ dependencies:
     VaultUnlocked:
       load: BEFORE
       required: false
+    Essentials:
+      load: BEFORE
+      required: false
 
 features:
   debug: true

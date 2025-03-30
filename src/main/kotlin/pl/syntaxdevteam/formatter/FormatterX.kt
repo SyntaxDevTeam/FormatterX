@@ -18,11 +18,14 @@ class FormatterX : JavaPlugin() {
     private lateinit var statsCollector: StatsCollector
     lateinit var messageHandler: MessageHandler
     private lateinit var updateChecker: UpdateChecker
-    private lateinit var hookHandler: HookHandler
+    lateinit var hookHandler: HookHandler
     private lateinit var commandManager: CommandManager
+    private var configHandler = ConfigHandler(this)
+
 
     override fun onEnable() {
         saveDefaultConfig()
+        configHandler.verifyAndUpdateConfig()
         hookHandler = HookHandler(this)
         messageHandler = MessageHandler(this).apply { initial() }
         server.pluginManager.registerEvents(ChatFormatterListener(this, messageHandler, hookHandler), this)

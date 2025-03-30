@@ -23,18 +23,26 @@ class CommandsFormatterListener(
 
     private val resolverCache = ConcurrentHashMap<Player, TagResolver>()
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onPrivateMessage(event: PlayerCommandPreprocessEvent) {
+
         val player = event.player
         val messageParts = event.message.split(" ", limit = 3)
         if (messageParts.size < 3) return
-
+        /* ---------------------------------------------- */
         val command = messageParts[0].lowercase()
-        if (command !in setOf("/msg", "/whisper", "/tell", "/w", "/r")) return
+        val privateMessageCommands = plugin.config.getStringList("private-message-commands")
+            .ifEmpty { listOf("/msg", "/whisper", "/tell", "/w", "/r") }
+
+        if (command !in privateMessageCommands.map { it.lowercase() }) return
+        if (!player.hasPermission("formatterx.chat.private-message")) {
+            return
+        }
+        /*----------------------------------------------- */
 
         event.isCancelled = true
 
-        val targetPlayer = Bukkit.getPlayerExact(messageParts[1]) ?: return
+        val targetPlayer = getPlayerByNameOrDisplayName(messageParts[1]) ?: return
         val messageContent = PlainTextComponentSerializer.plainText().serialize(Component.text(messageParts[2]))
 
         val senderFormat = generatePrivateMessageFormat(player, targetPlayer, messageContent, true)
@@ -59,7 +67,7 @@ class CommandsFormatterListener(
         val receiverName = receiver.name
 
         val formatKey = if (isSender) "chat.private-message.sent" else "chat.private-message.received"
-        val format = plugin.config.getString(formatKey, "<gray>[PM] {sender} <-> {receiver}: {message}</gray>") ?: "<gray>[PM] {sender} <-> {receiver}: {message}</gray>"
+        val format = plugin.config.getString(formatKey, "<gray>[PM] {sender} -> {receiver}: {message}</gray>") ?: "<gray>[PM] {sender} -> {receiver}: {message}</gray>"
 
         return format
             .replace("{sender}", senderName)
@@ -69,11 +77,36 @@ class CommandsFormatterListener(
 
     private fun getResolver(player: Player): TagResolver {
         return resolverCache.computeIfAbsent(player) {
-            if (hookHandler.checkMiniPlaceholderAPI()) {
+            if (plugin.hookHandler.checkMiniPlaceholderAPI()) {
                 TagResolver.resolver(MiniPlaceholders.getAudiencePlaceholders(player))
             } else {
                 TagResolver.empty()
             }
         }
     }
+
+    private fun getPlayerByNameOrDisplayName(name: String): Player? {
+        Bukkit.getPlayerExact(name)?.let { return it }
+
+        val essentials = hookHandler.checkEssentialsX()
+        if (essentials != null) {
+            for (player in Bukkit.getOnlinePlayers()) {
+                val user = essentials.getUser(player)
+                val essentialsNick = user?.nickname
+                if (essentialsNick != null && essentialsNick.equals(name, ignoreCase = true)) {
+                    return player
+                }
+            }
+        }
+
+        for (player in Bukkit.getOnlinePlayers()) {
+            val displayName = PlainTextComponentSerializer.plainText().serialize(player.displayName())
+            if (displayName.equals(name, ignoreCase = true)) {
+                return player
+            }
+        }
+
+        return null
+    }
+
 }
