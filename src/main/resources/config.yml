@@ -36,7 +36,14 @@ chat:
   suffixes_separator: " "
   mention-sound: "entity_experience_orb_pickup" # Sound played when a player is mentioned in chat. Possible values: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
 
-
+# List of commands to be supported
+private-message-commands:
+  - "/msg"
+  - "/tell"
+  - "/w"
+  - "/whisper"
+  - "/r"
+  - "/pm"
 
 # Plugin language selection. Possible values:  EN, PL
 # If you would like to add your own language file, please contact us on Discord (https://discord.gg/Zk6mxv7eMh).

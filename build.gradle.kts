@@ -1,10 +1,10 @@
 plugins {
-    kotlin("jvm") version "2.1.10"
-    id("com.gradleup.shadow") version "9.0.0-beta10"
+    kotlin("jvm") version "2.1.20"
+    id("com.gradleup.shadow") version "9.0.0-beta11"
 }
 
 group = "pl.syntaxdevteam.formatter"
-version = "1.1.0"
+version = "1.2.0"
 description = "The intelligent chat formatting plugin with LuckPerms, PlaceholderAPI, MiniPlaceholder, Vault and VaultUnlocked support!"
 
 repositories {
@@ -18,6 +18,9 @@ repositories {
     maven("https://repo.extendedclip.com/releases/")
     maven("https://jitpack.io")
     maven("https://repo.codemc.org/repository/maven-public")
+    maven("https://repo.essentialsx.net/releases") {
+        name = "essentialsx"
+    }
 }
 
 dependencies {
@@ -35,6 +38,7 @@ dependencies {
     compileOnly("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.3.0")
     compileOnly("com.github.milkbowl:VaultAPI:1.7.1")
     compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.9")
+    compileOnly("net.essentialsx:EssentialsX:2.21.0")
 }
 
 val targetJavaVersion = 21

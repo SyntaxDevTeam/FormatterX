@@ -1,5 +1,6 @@
 package pl.syntaxdevteam.formatter.hooks
 
+import com.earth2me.essentials.Essentials
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.cacheddata.CachedMetaData
 import net.luckperms.api.model.user.User
@@ -32,6 +33,7 @@ class HookHandler(private val plugin: FormatterX) {
         checkPlaceholderAPI()
         checkLuckPerms()
         checkVault()
+        checkEssentialsX()
         if (chat == null || permission == null) {
             checkVaultUnlocked()
         }
@@ -51,6 +53,22 @@ class HookHandler(private val plugin: FormatterX) {
             }
         } else {
             plugin.logger.debug("LuckPerms plugin not found on server!")
+        }
+    }
+
+    fun checkEssentialsX(): Essentials? {
+        if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
+            val essentials = Bukkit.getPluginManager().getPlugin("Essentials") as? Essentials
+            if (essentials != null) {
+                plugin.logger.debug("Hooked into EssentialsX!")
+                return essentials
+            } else {
+                plugin.logger.debug("Error when trying to hook to EssentialsX")
+                return null
+            }
+        } else {
+            plugin.logger.debug("EssentialsX plugin not found on server!")
+            return null
         }
     }
 
